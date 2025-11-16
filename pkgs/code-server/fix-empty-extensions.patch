@@ -1,0 +1,29 @@
+--- a/lib/vscode/build/lib/extensions.ts
++++ b/lib/vscode/build/lib/extensions.ts
+@@ -426,15 +426,24 @@ function doPackageLocalExtensionsStream(forWeb: boolean, disableMangle: boolean,
+ 		.filter(({ stat }) => !stat.isDirectory()) // only include files
+ 		.filter(({ manifestPath }) => (forWeb ? isWebExtension(require(manifestPath)) : true))
+ 	);
+ 	const localExtensionsStream = minifyExtensionResources(
+-		es.merge(
+-			...localExtensionsDescriptions.map(extension => {
+-				return fromLocal(extension.path, forWeb, disableMangle)
+-					.pipe(rename(p => p.dirname = `extensions/${extension.name}/${p.dirname}`));
+-			})
++		localExtensionsDescriptions.length > 0 ?
++		es.merge(
++			...localExtensionsDescriptions.map(extension => {
++				return fromLocal(extension.path, forWeb, disableMangle)
++					.pipe(rename(p => p.dirname = `extensions/${extension.name}/${p.dirname}`));
++			})
++		) :
++		// Return an empty passthrough stream if there are no local extensions
++		es.through(function(file) {
++			this.queue(file);
++		}, function() {
++			this.queue(null);
++		})
+ 	);
+
+ 	let result: Stream;
+ 	if (builtInExtensionsFolderPath) {

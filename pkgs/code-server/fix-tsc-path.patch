@@ -1,0 +1,11 @@
+--- a/ci/build/build-code-server.sh
++++ b/ci/build/build-code-server.sh
+@@ -6,7 +6,7 @@
+ main() {
+   cd "$(dirname "${0}")/../.."
+
+-  tsc
++  ./node_modules/.bin/tsc
+
+   # If out/node/entry.js does not already have the shebang,
+   # we make sure to add it and make it executable.

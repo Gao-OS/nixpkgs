@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchNpmDeps,
   buildGoModule,
   makeWrapper,
   cacert,
@@ -123,6 +124,34 @@ stdenv.mkDerivation (finalAttrs: {
     outputHash = "sha256-3xDinhLSZJoz7N7Z/+ttDLh82fwyunOTeSE3ULOZcHA=";
   };
 
+  npmDeps = fetchNpmDeps {
+    src = finalAttrs.src;
+    hash = "sha256-mfKXZtUizQ8kzJOvCc9weLhdSFMAuLWiV/hxePlxF6k=";
+  };
+
+  vscodeNpmDeps = fetchNpmDeps {
+    # Apply patch to remove git dependency before fetching npm deps
+    src = stdenv.mkDerivation {
+      name = "vscode-source";
+      src = "${finalAttrs.src}/lib/vscode";
+      patches = [ ./use-npm-parcel-watcher.patch ];
+      postPatch = ''
+        # Replace git URL with npm registry URL for @parcel/watcher in package-lock.json
+        sed -i 's|"resolved": "git+ssh://git@github.com/parcel-bundler/watcher.git#[^"]*"|"resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.5.1.tgz"|g' package-lock.json
+        # Also update the integrity hash to match npm registry version
+        sed -i '/node_modules\/@parcel\/watcher"/,/"integrity":/ s|"integrity": "sha512-[^"]*"|"integrity": "sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg=="|' package-lock.json
+      '';
+      dontBuild = true;
+      installPhase = "cp -r . $out";
+    };
+    hash = "sha256-CFDUyINXtJ52f4tAYbhGIQPNZe3/w1NHlYnAuOv6t5Q=";
+  };
+
+  vscodeBuildNpmDeps = fetchNpmDeps {
+    src = "${finalAttrs.src}/lib/vscode/build";
+    hash = "sha256-uF0pRPorBej3OXH+Mhq7wT28I8NBFLdZ1tdIDFpMQmU=";
+  };
+
   nativeBuildInputs = [
     nodejs
     yarn'
@@ -152,6 +181,10 @@ stdenv.mkDerivation (finalAttrs: {
     # Remove all git calls from the VS Code build script except `git rev-parse
     # HEAD` which is replaced in postPatch with the commit.
     ./build-vscode-nogit.patch
+    # Fix tsc command to use yarn tsc for proper PATH resolution
+    ./fix-tsc-path.patch
+    # Fix empty local extensions stream (v4.105.1 builds for web have no local extensions)
+    ./fix-empty-extensions.patch
   ];
 
   postPatch = ''
@@ -164,6 +197,12 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail '$(git rev-parse HEAD)' "${commit}"
     substituteInPlace ./ci/build/build-release.sh \
       --replace-fail '$(git rev-parse HEAD)' "${commit}"
+
+    # Patch lib/vscode to replace @parcel/watcher git dependency with npm version
+    sed -i 's|"@parcel/watcher": "parcel-bundler/watcher#[^"]*"|"@parcel/watcher": "^2.5.1"|g' lib/vscode/package.json
+    sed -i 's|"resolved": "git+ssh://git@github.com/parcel-bundler/watcher.git#[^"]*"|"resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.5.1.tgz"|g' lib/vscode/package-lock.json
+    # Also update the integrity hash to match npm registry version
+    sed -i '/node_modules\/@parcel\/watcher"/,/"integrity":/ s|"integrity": "sha512-[^"]*"|"integrity": "sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg=="|' lib/vscode/package-lock.json
   '';
 
   configurePhase = ''
@@ -226,18 +265,16 @@ stdenv.mkDerivation (finalAttrs: {
 
     # Install dependencies.
     patchShebangs .
+    # Install yarn dependencies (lib/vscode and subdirectories)
     find . -name "yarn.lock" -printf "%h\n" | \
         xargs -I {} yarn --cwd {} \
           --offline --frozen-lockfile --ignore-scripts --ignore-engines
+    # Install root npm dependencies (v4.105.1 uses npm for root, not yarn)
+    export npm_config_cache="${finalAttrs.npmDeps}"
+    npm ci --offline --ignore-scripts --cache "${finalAttrs.npmDeps}"
     patchShebangs .
 
-    # Use esbuild from nixpkgs.
-    ${patchEsbuild "./lib/vscode/build" "0.12.6"}
-    ${patchEsbuild "./lib/vscode/extensions" "0.11.23"}
-
-    # Kerberos errors while building, so remove it for now as it is not
-    # required.
-    yarn remove kerberos --cwd lib/vscode/remote --offline --frozen-lockfile --ignore-scripts --ignore-engines
+    # Note: Kerberos removal step from v4.91.1 removed - not needed in v4.105.1
 
     # Put ripgrep binary into bin, so post-install does not try to download it.
     find -name ripgrep -type d \
@@ -249,6 +286,15 @@ stdenv.mkDerivation (finalAttrs: {
       -and -type f -name "yarn.lock" -printf "%h\n" | \
         xargs -I {} sh -c 'jq -e ".scripts.postinstall" {}/package.json >/dev/null && yarn --cwd {} postinstall --frozen-lockfile --offline || true'
     patchShebangs .
+
+    # Use esbuild from nixpkgs (must be after post-install scripts).
+    # Only patch if esbuild directories exist (structure may have changed in v4.105.1)
+    if [ -f "./lib/vscode/build/node_modules/esbuild/package.json" ]; then
+      ${patchEsbuild "./lib/vscode/build" "0.12.6"}
+    fi
+    if [ -f "./lib/vscode/extensions/node_modules/esbuild/package.json" ]; then
+      ${patchEsbuild "./lib/vscode/extensions" "0.11.23"}
+    fi
 
   ''
   + lib.optionalString stdenv.hostPlatform.isDarwin ''
@@ -263,8 +309,25 @@ stdenv.mkDerivation (finalAttrs: {
   + ''
 
     # Build binary packages (argon2, node-pty, etc).
-    npm rebuild --offline
-    npm rebuild --offline --prefix lib/vscode/remote
+    # Use --ignore-scripts to prevent postinstall from fetching test dependencies
+    npm rebuild --offline --ignore-scripts
+    npm rebuild --offline --ignore-scripts --prefix lib/vscode/remote
+
+    # Install lib/vscode dependencies (VS Code switched to npm in v4.105.1)
+    # Copy npm cache to writable location since npm needs to write to it
+    export npm_vscode_cache="$TMPDIR/npm-vscode-cache"
+    cp -r "${finalAttrs.vscodeNpmDeps}" "$npm_vscode_cache"
+    chmod -R +w "$npm_vscode_cache"
+    npm ci --prefix lib/vscode --offline --ignore-scripts --cache "$npm_vscode_cache"
+
+    # Install lib/vscode/build dependencies
+    export npm_vscode_build_cache="$TMPDIR/npm-vscode-build-cache"
+    cp -r "${finalAttrs.vscodeBuildNpmDeps}" "$npm_vscode_build_cache"
+    chmod -R +w "$npm_vscode_build_cache"
+    npm ci --prefix lib/vscode/build --offline --ignore-scripts --cache "$npm_vscode_build_cache"
+
+    # Add node_modules/.bin to PATH for build tools like tsc and gulp
+    export PATH="$PWD/node_modules/.bin:$PWD/lib/vscode/node_modules/.bin:$PATH"
 
     # Build code-server and VS Code.
     yarn build
