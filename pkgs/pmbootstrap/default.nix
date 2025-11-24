@@ -11,7 +11,7 @@
 }:
 python3Packages.buildPythonApplication rec {
   pname = "pmbootstrap";
-  version = "3.3.2";
+  version = "3.6.0";
   pyproject = true;
 
   src = fetchFromGitLab {
@@ -19,7 +19,7 @@ python3Packages.buildPythonApplication rec {
     owner = "postmarketOS";
     repo = pname;
     rev = version;
-    hash = "sha256-A/hWJwyx/k9+NNOJBuor2qQi5gRB3Rpp5qnRloFM0FM=";
+    hash = "sha256-sO042kmozpGbiojkivs4xbYDgVV4nVbiWkfxnbJFOJg=";
   };
 
   pmb_test = "${src}/test";
