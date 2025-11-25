@@ -7,28 +7,28 @@
     if stdenv.hostPlatform.system == "x86_64-linux"
     then {
       name = "linux_amd64";
-      hash = "sha256-nMModB1VsQ1CovDC//SGFExb6cobSVWIWwzH009H7YM=";
+      hash = "sha256-RtckOjiRyG7KC4CpWl8Gib+GSu3YnGiwa0Cm5wNjeFk=";
     }
     else if stdenv.hostPlatform.system == "aarch64-linux"
     then {
       name = "linux_arm64";
-      hash = "sha256-gbwLmwGrG5UndDLpVQXf6Ve1n4KJKstMDN4br+631Es=";
+      hash = "sha256-NUineKiEJov6lCU14WxSkTRrMXKAqh1A7B5Cw/eTVbU=";
     }
     else if stdenv.hostPlatform.system == "x86_64-darwin"
     then {
       name = "darwin_amd64";
-      hash = "sha256-UgGqTdQtCWNrXuJrA6bVBvAJR8rgY7agdSftcX/YPuY=";
+      hash = "sha256-KbLsq+JRV0VNtUTtzni29W2s/NOfQbija6F5CaMSgoU=";
     }
     else if stdenv.hostPlatform.system == "aarch64-darwin"
     then {
       name = "darwin_arm64";
-      hash = "sha256-zpcrGTHsC3qqzBBCYQJh+hCIP9YLOyHBG25gofsvJws=";
+      hash = "sha256-PTTZVdOYgEqHXCJRTDo9jFzM/wSTe0KbtNwDu+4Nrpg=";
     }
     else throw "Unsupported platform: ${stdenv.hostPlatform.system}";
 in
   stdenv.mkDerivation rec {
     pname = "caddy";
-    version = "2.8.4";
+    version = "2.10.2";
 
     src = fetchurl {
       url = "https://github.com/gsmlg-dev/Foundation/releases/download/caddy-v${version}/caddy_${caddyArch.name}";
