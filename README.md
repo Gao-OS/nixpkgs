@@ -7,6 +7,7 @@ Custom package collection for GaoOS, providing additional packages and tools not
 - **caddy-with-plugins**: Caddy web server with custom plugins from gsmlg-dev Foundation
 - **code-server-latest**: VS Code running on a remote server (v4.105.1)
 - **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.3.2)
+- **openclaw**: Multi-channel AI gateway (v2026.3.28)
 
 ## Usage
 
@@ -95,6 +96,62 @@ nix run .#code-server-latest -- --help
 }
 ```
 
+## NixOS Module: OpenClaw
+
+This repo exports a NixOS module for running OpenClaw as a systemd service.
+
+### Enable the service
+
+```nix
+{
+  inputs.gaoos-nixpkgs.url = "github:Gao-OS/nixpkgs";
+
+  outputs = { self, nixpkgs, gaoos-nixpkgs, ... }: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        { nixpkgs.overlays = [ gaoos-nixpkgs.overlays.default ]; }
+        gaoos-nixpkgs.nixosModules.openclaw
+        {
+          services.openclaw = {
+            enable = true;
+            openFirewall = true;
+            port = 18789;
+            environmentFile = "/run/secrets/openclaw.env";
+            documents = {
+              "AGENTS.md" = ''
+                # Agents
+                You are a helpful assistant.
+              '';
+              "SOUL.md" = ''
+                # Soul
+                Be kind and concise.
+              '';
+            };
+          };
+        }
+      ];
+    };
+  };
+}
+```
+
+### Module options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `services.openclaw.enable` | `false` | Enable the OpenClaw gateway service |
+| `services.openclaw.package` | `pkgs.openclaw` | Package to use |
+| `services.openclaw.port` | `18789` | Gateway TCP port |
+| `services.openclaw.bindAddress` | `"127.0.0.1"` | Bind address |
+| `services.openclaw.user` | `"openclaw"` | Service user |
+| `services.openclaw.group` | `"openclaw"` | Service group |
+| `services.openclaw.stateDir` | `"/var/lib/openclaw"` | Mutable state directory |
+| `services.openclaw.environmentFile` | `null` | Path to env file with secrets |
+| `services.openclaw.documents` | `{}` | Workspace docs (e.g. AGENTS.md, SOUL.md) |
+| `services.openclaw.extraEnvironment` | `{}` | Extra env vars |
+| `services.openclaw.openFirewall` | `false` | Open the gateway port in the firewall |
+
 ## Development
 
 ### Adding a New Package
@@ -121,7 +178,7 @@ nix flake check
 nix flake show
 
 # Build all packages
-nix build .#caddy-with-plugins .#code-server-latest .#pmbootstrap-new
+nix build .#caddy-with-plugins .#code-server-latest .#pmbootstrap-new .#openclaw
 ```
 
 ## Supported Systems

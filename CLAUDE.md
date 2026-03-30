@@ -22,8 +22,14 @@ nixpkgs/
 │   │   ├── default.nix
 │   │   ├── build-vscode-nogit.patch
 │   │   └── remove-node-download.patch
-│   └── pmbootstrap/       # PostmarketOS development tool
-│       └── default.nix
+│   ├── pmbootstrap/       # PostmarketOS development tool
+│   │   └── default.nix
+│   └── openclaw/          # OpenClaw AI gateway
+│       ├── default.nix
+│       └── package-lock.json
+├── modules/
+│   └── nixos/
+│       └── openclaw.nix   # NixOS module for services.openclaw
 └── overlays/
     └── default.nix        # Overlay for integrating with nixpkgs
 ```
@@ -62,6 +68,13 @@ Each package follows the nixpkgs convention:
    - Python application using buildPythonApplication
    - Includes comprehensive test suite (mostly disabled as impure)
    - Version: 3.3.2
+
+4. **openclaw** (pkgs/openclaw/default.nix:1)
+   - Multi-channel AI gateway (Node.js)
+   - Built from pre-compiled npm registry tarball using `buildNpmPackage`
+   - Requires Node.js 22; includes generated `package-lock.json`
+   - NixOS module available at `modules/nixos/openclaw.nix`
+   - Version: 2026.3.28
 
 ## Development Commands
 

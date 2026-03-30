@@ -37,11 +37,15 @@
           caddy-with-plugins = pkgs.caddy-with-plugins;
           code-server-latest = pkgs.code-server-latest;
           pmbootstrap-new = pkgs.pmbootstrap-new;
+          openclaw = pkgs.openclaw;
 
           # Default package
           default = pkgs.caddy-with-plugins;
         }
       );
+
+      # NixOS modules
+      nixosModules.openclaw = import ./modules/nixos/openclaw.nix;
 
       # Legacy package output (for nix-build support)
       legacyPackages = forAllSystems (system: nixpkgsFor.${system});
