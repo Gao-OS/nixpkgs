@@ -37,10 +37,16 @@ buildNpmPackage rec {
 
   nativeBuildInputs = [ makeWrapper jq ];
 
+  # postPatch is inherited by the internal fetchNpmDeps derivation, which has
+  # a minimal build environment — only copy the lockfile here.
   postPatch = ''
     cp ${./package-lock.json} package-lock.json
-    # Strip lifecycle scripts that try to run pnpm (not available in sandbox).
-    # The npm tarball already ships pre-built dist/, so these are unnecessary.
+  '';
+
+  # preConfigure runs only in the main derivation (not in fetchNpmDeps).
+  # Strip lifecycle scripts that try to invoke pnpm, which is not available
+  # in the Nix sandbox. The npm tarball already ships pre-built dist/.
+  preConfigure = ''
     jq 'del(.scripts.prepack, .scripts.prepare, .scripts.postinstall, .scripts.build)' \
       package.json > package.json.tmp && mv package.json.tmp package.json
   '';
