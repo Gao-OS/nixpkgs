@@ -3,12 +3,19 @@
 # To update:
 #   1. Change `version` below
 #   2. Update `src.hash` (set to "" and nix will report the correct hash)
-#   3. Regenerate package-lock.json:
-#        npm pack openclaw@<new-version> && tar xzf openclaw-*.tgz
-#        cd package && npm install --package-lock-only --ignore-scripts
-#        cp package-lock.json <this-directory>/package-lock.json
+#   3. Regenerate package-lock.json using the helper script:
+#        ./scripts/gen-openclaw-lockfile.sh <new-version>
 #   4. Update `npmDepsHash` (set to "" and nix will report the correct hash)
 #   5. Test: nix build .#openclaw
+#
+# Why the symlink step in postInstall:
+#   The npm tarball ships 7 pre-built extension bundles under dist/extensions/
+#   (slack, telegram, amazon-bedrock, discord, feishu, diffs, qqbot), each with
+#   its own node_modules. openclaw's bundled dist/ chunks (e.g. sticker-cache-*.js)
+#   are shared across extensions and import those packages (grammy, @slack/bolt,
+#   @aws-sdk/client-bedrock, …) using bare specifiers. Node.js resolves bare
+#   specifiers by walking up from the importing file — dist/*.js never reaches
+#   dist/extensions/*/node_modules, so we expose them via the main node_modules.
 {
   lib,
   buildNpmPackage,
@@ -62,6 +69,27 @@ buildNpmPackage rec {
     # Wrap the entry point with the correct node version
     makeWrapper ${nodejs_24}/bin/node "$out/bin/openclaw" \
       --add-flags "$out/lib/node_modules/openclaw/openclaw.mjs"
+
+    # Expose bundled extension node_modules in the main node_modules so that
+    # shared dist chunks can find them via normal Node.js resolution.
+    lib="$out/lib/node_modules/openclaw"
+    for ext_nm in "$lib/dist/extensions/"*/node_modules; do
+      [ -d "$ext_nm" ] || continue
+      for entry in "$ext_nm/"*; do
+        name=$(basename "$entry")
+        dest="$lib/node_modules/$name"
+        if [[ "$name" == @* ]]; then
+          # Scoped package scope dir (e.g. @slack, @grammyjs)
+          mkdir -p "$dest"
+          for sub in "$entry/"*; do
+            subname=$(basename "$sub")
+            [ -e "$dest/$subname" ] || ln -s "$sub" "$dest/$subname"
+          done
+        else
+          [ -e "$dest" ] || ln -s "$entry" "$dest"
+        fi
+      done
+    done
   '';
 
   meta = with lib; {
