@@ -13,16 +13,18 @@
 #   - The `documents` option lets operators declare AGENTS.md / SOUL.md / TOOLS.md
 #     inline in NixOS configuration; files are materialized into the state directory
 #     on every service start so they always match the deployed config.
-{ config, lib, pkgs, ... }:
-
-let
-  cfg = config.services.openclaw;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.services.openclaw;
+in {
   options.services.openclaw = {
     enable = lib.mkEnableOption "OpenClaw AI gateway";
 
-    package = lib.mkPackageOption pkgs "openclaw" { };
+    package = lib.mkPackageOption pkgs "openclaw" {};
 
     user = lib.mkOption {
       type = lib.types.str;
@@ -68,7 +70,7 @@ in
 
     documents = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = { };
+      default = {};
       example = lib.literalExpression ''
         {
           "AGENTS.md" = "# Agents\n…";
@@ -87,7 +89,7 @@ in
 
     extraEnvironment = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
-      default = { };
+      default = {};
       example = {
         OPENCLAW_LOG_LEVEL = "debug";
       };
@@ -111,7 +113,7 @@ in
       description = "OpenClaw service user";
     };
 
-    users.groups.${cfg.group} = lib.mkIf (cfg.group == "openclaw") { };
+    users.groups.${cfg.group} = lib.mkIf (cfg.group == "openclaw") {};
 
     # Create the state directory via tmpfiles so it works regardless of whether
     # stateDir is under /var/lib or another path, and survives service restarts.
@@ -119,32 +121,37 @@ in
       "d '${cfg.stateDir}' 0750 ${cfg.user} ${cfg.group} - -"
     ];
 
-    networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ cfg.port ];
+    networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [cfg.port];
 
     systemd.services.openclaw = {
       description = "OpenClaw AI Gateway";
-      after = [ "network.target" "systemd-tmpfiles-setup.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["network.target" "systemd-tmpfiles-setup.service"];
+      wantedBy = ["multi-user.target"];
 
-      environment = {
-        HOME = cfg.stateDir;
-        OPENCLAW_PORT = toString cfg.port;
-        OPENCLAW_HOST = cfg.bindAddress;
-        OPENCLAW_STATE_DIR = cfg.stateDir;
-        # Disable any built-in self-update logic.
-        OPENCLAW_NO_UPDATE = "1";
-      } // cfg.extraEnvironment;
+      environment =
+        {
+          HOME = cfg.stateDir;
+          OPENCLAW_PORT = toString cfg.port;
+          OPENCLAW_HOST = cfg.bindAddress;
+          OPENCLAW_STATE_DIR = cfg.stateDir;
+          # Disable any built-in self-update logic.
+          OPENCLAW_NO_UPDATE = "1";
+          # Plug is publish in ts source
+          NODE_OPTIONS = "--experimental-transform-types";
+        }
+        // cfg.extraEnvironment;
 
       # Materialize declared documents into the state directory before startup.
       # preStart runs as the service user (cfg.user), which owns stateDir, so
       # plain `install` without -o/-g is correct — no root required.
       preStart = lib.concatStringsSep "\n" (
         lib.mapAttrsToList
-          (name: content:
-            let docFile = pkgs.writeText "openclaw-doc-${name}" content;
-            in "install -m 0640 ${docFile} '${cfg.stateDir}/${name}'"
-          )
-          cfg.documents
+        (
+          name: content: let
+            docFile = pkgs.writeText "openclaw-doc-${name}" content;
+          in "install -m 0640 ${docFile} '${cfg.stateDir}/${name}'"
+        )
+        cfg.documents
       );
 
       serviceConfig = {
@@ -169,7 +176,7 @@ in
         ProtectKernelModules = true;
         ProtectControlGroups = true;
         RestrictSUIDSGID = true;
-        ReadWritePaths = [ cfg.stateDir ];
+        ReadWritePaths = [cfg.stateDir];
       };
     };
   };
