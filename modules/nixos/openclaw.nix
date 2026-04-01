@@ -138,6 +138,11 @@ in {
           OPENCLAW_NO_UPDATE = "1";
           # Plug is publish in ts source
           NODE_OPTIONS = "--experimental-transform-types";
+          # some packages are missing
+          # - @slack/web-api
+          # - @slack/bolt
+          # - @aws-sdk/client-bedrock
+          NODE_PATH = "/var/lib/openclaw/nodepath/node_modules";
         }
         // cfg.extraEnvironment;
 
