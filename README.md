@@ -7,7 +7,7 @@ Custom package collection for GaoOS, providing additional packages and tools not
 - **caddy-with-plugins**: Caddy web server with custom plugins from gsmlg-dev Foundation
 - **code-server-latest**: VS Code running on a remote server (v4.105.1)
 - **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.3.2)
-- **openclaw**: Multi-channel AI gateway (v2026.3.28)
+- **openclaw**: Multi-channel AI gateway (v2026.3.31)
 
 ## Usage
 
@@ -167,6 +167,19 @@ This repo exports a NixOS module for running OpenClaw as a systemd service.
    ```
 4. Export it in `flake.nix` under the `packages` output
 5. Test the build: `nix build .#my-new-package`
+
+### Updating openclaw
+
+openclaw's `package-lock.json` must be regenerated from the GitHub source (not
+the npm tarball), as the tarball strips extension deps and the full dep tree is
+needed for the Nix build.
+
+```bash
+./scripts/gen-openclaw-lockfile.sh <new-version>
+```
+
+Then update `pkgs/openclaw/default.nix` with the new version and hashes
+(set each hash to `""` and run `nix build .#openclaw` to get the correct value).
 
 ### Testing Changes
 

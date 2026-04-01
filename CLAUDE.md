@@ -30,6 +30,8 @@ nixpkgs/
 ├── modules/
 │   └── nixos/
 │       └── openclaw.nix   # NixOS module for services.openclaw
+├── scripts/
+│   └── gen-openclaw-lockfile.sh  # Regenerate openclaw package-lock.json
 └── overlays/
     └── default.nix        # Overlay for integrating with nixpkgs
 ```
@@ -72,9 +74,10 @@ Each package follows the nixpkgs convention:
 4. **openclaw** (pkgs/openclaw/default.nix:1)
    - Multi-channel AI gateway (Node.js)
    - Built from pre-compiled npm registry tarball using `buildNpmPackage`
-   - Requires Node.js 22; includes generated `package-lock.json`
+   - Requires Node.js 24; includes generated `package-lock.json`
    - NixOS module available at `modules/nixos/openclaw.nix`
-   - Version: 2026.3.28
+   - Version: 2026.3.31
+   - Use `scripts/gen-openclaw-lockfile.sh <version>` to regenerate `pkgs/openclaw/package-lock.json` when updating
 
 ## Development Commands
 
@@ -145,6 +148,33 @@ nix-instantiate --parse flake.nix
    ```
 5. Test build: `nix build .#new-package`
 6. Verify metadata: `nix eval .#packages.x86_64-linux.new-package.meta --json | jq`
+
+### Updating openclaw
+
+openclaw is a pnpm monorepo. Its npm tarball only lists 47 root deps, but the
+build also needs deps from all `extensions/` subpackages and the tarball's
+`devDependencies`. Use the provided script to regenerate the lockfile correctly:
+
+```bash
+# 1. Regenerate package-lock.json from the new version's source
+./scripts/gen-openclaw-lockfile.sh <new-version>
+
+# 2. Update version and blank out hashes in pkgs/openclaw/default.nix:
+#      version = "<new-version>"
+#      src.hash = ""
+#      npmDepsHash = ""
+
+# 3. Get src.hash:
+nix build .#openclaw 2>&1 | grep "got:"
+# paste the reported hash into src.hash
+
+# 4. Get npmDepsHash:
+nix build .#openclaw 2>&1 | grep "got:"
+# paste the reported hash into npmDepsHash
+
+# 5. Verify:
+nix build .#openclaw
+```
 
 ### Modifying Existing Packages
 
