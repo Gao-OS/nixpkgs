@@ -33,7 +33,7 @@ buildNpmPackage rec {
   sourceRoot = "package";
 
   # Generated from package-lock.json (see update instructions above)
-  npmDepsHash = "sha256-QA/UpcKJn69YrMaiH1Rdsm3dlLanDIGuT6tGLR9PE8w=";
+  npmDepsHash = "sha256-O/hLRvteQ1AbBH+gHW51oQos0yBqTs+c2Hxv6gst+70=";
 
   nativeBuildInputs = [ makeWrapper jq ];
 
