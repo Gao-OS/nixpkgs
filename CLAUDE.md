@@ -76,6 +76,7 @@ Each package follows the nixpkgs convention:
    - Run large language models locally (Go + CMake + native backends)
    - Supports CPU, ROCm (AMD), CUDA (NVIDIA), and Vulkan GPU acceleration
    - Adapted from upstream nixpkgs; uses `proxyVendor = true` to include C sources for tree-sitter
+   - tree-sitter C sources injected via `overrideModAttrs.postInstall` (go mod vendor omits them)
    - Variants: `ollama`, `ollama-rocm`, `ollama-cuda`, `ollama-vulkan`
    - Use `scripts/update-ollama.sh` to update to latest release
    - Version: 0.20.0
@@ -171,8 +172,11 @@ nix-instantiate --parse flake.nix
 nix build .#ollama
 ```
 
-Note: ollama uses `proxyVendor = true` because v0.16+ depends on `tree-sitter` C sources
-that `go mod vendor` omits. The proxy module cache includes all files.
+Note: v0.16+ depends on `tree-sitter` C sources that `go mod vendor` omits (files in
+`include/` and `src/` are not co-located with Go packages). These are fetched separately
+via `goTreeSitterSrc` / `treeSitterCppSrc` and injected in `overrideModAttrs.postInstall`.
+This is more stable than `proxyVendor = true`, which ties the vendorHash to the nixpkgs
+Go version and breaks when machines have different nixpkgs pins.
 
 ### Updating openclaw
 

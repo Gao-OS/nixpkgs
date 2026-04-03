@@ -129,6 +129,22 @@ let
       buildGoModule.override { stdenv = vulkan-tools.stdenv; }
     else
       buildGoModule;
+  # go mod vendor omits C files in subdirectories not collocated with Go
+  # packages (include/, src/, lib.c for go-tree-sitter; src/ for tree-sitter-cpp).
+  # Fetch the module sources separately so overrideModAttrs can copy them in.
+  goTreeSitterSrc = fetchFromGitHub {
+    owner = "tree-sitter";
+    repo = "go-tree-sitter";
+    rev = "adc13ffd8b2c0b01b878fda9f7c422ce0df5fad3"; # v0.25.0
+    hash = "sha256-DVVhHQy0AEVyCig18JhlTVgttWaHJWRPdTSfwfFuKAk=";
+  };
+  treeSitterCppSrc = fetchFromGitHub {
+    owner = "tree-sitter";
+    repo = "tree-sitter-cpp";
+    rev = "f41e1a044c8a84ea9fa8577fdd2eab92ec96de02"; # v0.23.4
+    hash = "sha256-tP5Tu747V8QMCEBYwOEmMQUm8OjojpJdlRmjcJTbe2k=";
+  };
+
   inherit (lib) licenses platforms maintainers;
 in
 goBuild (finalAttrs: {
@@ -143,8 +159,7 @@ goBuild (finalAttrs: {
     hash = "sha256-QQKPXdXlsT+uMGGIyqkVZqk6OTa7VHrwDVmgDdgdKOY=";
   };
 
-  proxyVendor = true;
-  vendorHash = "sha256-Lc1Ktdqtv2VhJQssk8K1UOimeEjVNvDWePE9WkamCos=";
+  vendorHash = "sha256-3ZvF4hrVJKKC+q947Ke+Oa/r/CZP0fNUz6YfEGZRIsc=";
 
   env =
     lib.optionalAttrs enableRocm {
@@ -190,7 +205,20 @@ goBuild (finalAttrs: {
 
   overrideModAttrs = (
     finalAttrs: prevAttrs: {
+      # don't run llama.cpp build in the module fetch phase
       preBuild = "";
+
+      # go mod vendor omits C files not co-located with Go packages.
+      # go-tree-sitter needs include/tree_sitter/api.h, src/, and lib.c;
+      # tree-sitter-cpp needs src/ (referenced as ../../src/ from bindings/go/).
+      postInstall = ''
+        ts_go="$out/github.com/tree-sitter/go-tree-sitter"
+        cp -r ${goTreeSitterSrc}/include "$ts_go/"
+        cp -r ${goTreeSitterSrc}/src     "$ts_go/"
+
+        ts_cpp="$out/github.com/tree-sitter/tree-sitter-cpp"
+        cp -r ${treeSitterCppSrc}/src "$ts_cpp/"
+      '';
     }
   );
 
