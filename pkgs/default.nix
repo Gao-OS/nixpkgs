@@ -5,8 +5,4 @@ pkgs: {
   pmbootstrap-new = pkgs.callPackage ./pmbootstrap {};
   code-server-latest = pkgs.callPackage ./code-server {};
   openclaw = pkgs.callPackage ./openclaw {};
-  ollama = pkgs.callPackage ./ollama {};
-  ollama-rocm = pkgs.callPackage ./ollama { acceleration = "rocm"; };
-  ollama-cuda = pkgs.callPackage ./ollama { acceleration = "cuda"; };
-  ollama-vulkan = pkgs.callPackage ./ollama { acceleration = "vulkan"; };
 }

@@ -8,7 +8,7 @@ Custom package collection for GaoOS, providing additional packages and tools not
 - **code-server-latest**: VS Code running on a remote server (v4.105.1)
 - **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.3.2)
 - **openclaw**: Multi-channel AI gateway (v2026.3.31)
-- **ollama** / **ollama-rocm** / **ollama-cuda** / **ollama-vulkan**: Run large language models locally (v0.20.0)
+- **ollama** / **ollama-rocm** / **ollama-cuda** / **ollama-vulkan**: Run large language models locally (from upstream nixpkgs)
 
 ## Usage
 

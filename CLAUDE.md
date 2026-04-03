@@ -31,8 +31,7 @@ nixpkgs/
 │   └── nixos/
 │       └── openclaw.nix   # NixOS module for services.openclaw
 ├── scripts/
-│   ├── gen-openclaw-lockfile.sh  # Regenerate openclaw package-lock.json
-│   └── update-ollama.sh          # Update ollama to latest release
+│   └── gen-openclaw-lockfile.sh  # Regenerate openclaw package-lock.json
 └── overlays/
     └── default.nix        # Overlay for integrating with nixpkgs
 ```
@@ -72,14 +71,12 @@ Each package follows the nixpkgs convention:
    - Includes comprehensive test suite (mostly disabled as impure)
    - Version: 3.3.2
 
-4. **ollama** (pkgs/ollama/default.nix:1)
-   - Run large language models locally (Go + CMake + native backends)
+4. **ollama** (re-exported from upstream nixpkgs via overlay)
+   - Run large language models locally
    - Supports CPU, ROCm (AMD), CUDA (NVIDIA), and Vulkan GPU acceleration
-   - Adapted from upstream nixpkgs; uses `proxyVendor = true` to include C sources for tree-sitter
-   - tree-sitter C sources injected via `overrideModAttrs.postInstall` (go mod vendor omits them)
    - Variants: `ollama`, `ollama-rocm`, `ollama-cuda`, `ollama-vulkan`
-   - Use `scripts/update-ollama.sh` to update to latest release
-   - Version: 0.20.0
+   - Re-exported via `prev` in flake.nix overlay (not in pkgs/default.nix — using `prev` avoids infinite recursion)
+   - To update: run `nix flake update` to pick up a newer nixpkgs pin
 
 5. **openclaw** (pkgs/openclaw/default.nix:1)
    - Multi-channel AI gateway (Node.js)
@@ -161,22 +158,12 @@ nix-instantiate --parse flake.nix
 
 ### Updating ollama
 
+ollama is re-exported from upstream nixpkgs. To get a newer version, update the nixpkgs pin:
+
 ```bash
-# Update to latest release (fetches version from GitHub, updates hashes automatically)
-./scripts/update-ollama.sh
-
-# Or pin to a specific version
-./scripts/update-ollama.sh 0.21.0
-
-# Verify
-nix build .#ollama
+nix flake update
+git add flake.lock && git commit -m "chore: update nixpkgs"
 ```
-
-Note: v0.16+ depends on `tree-sitter` C sources that `go mod vendor` omits (files in
-`include/` and `src/` are not co-located with Go packages). These are fetched separately
-via `goTreeSitterSrc` / `treeSitterCppSrc` and injected in `overrideModAttrs.postInstall`.
-This is more stable than `proxyVendor = true`, which ties the vendorHash to the nixpkgs
-Go version and breaks when machines have different nixpkgs pins.
 
 ### Updating openclaw
 

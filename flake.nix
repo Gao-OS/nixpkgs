@@ -25,7 +25,10 @@
         let
           packages = import ./pkgs/default.nix final;
         in
-        packages;
+        packages // {
+          # Re-export ollama variants from upstream nixpkgs (prev avoids infinite recursion)
+          inherit (prev) ollama ollama-rocm ollama-cuda ollama-vulkan;
+        };
 
       # Package outputs for each system
       packages = forAllSystems (system:
