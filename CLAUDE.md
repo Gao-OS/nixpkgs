@@ -31,7 +31,8 @@ nixpkgs/
 │   └── nixos/
 │       └── openclaw.nix   # NixOS module for services.openclaw
 ├── scripts/
-│   └── gen-openclaw-lockfile.sh  # Regenerate openclaw package-lock.json
+│   ├── gen-openclaw-lockfile.sh  # Regenerate openclaw package-lock.json
+│   └── update-ollama.sh          # Update ollama to latest release
 └── overlays/
     └── default.nix        # Overlay for integrating with nixpkgs
 ```
@@ -71,7 +72,15 @@ Each package follows the nixpkgs convention:
    - Includes comprehensive test suite (mostly disabled as impure)
    - Version: 3.3.2
 
-4. **openclaw** (pkgs/openclaw/default.nix:1)
+4. **ollama** (pkgs/ollama/default.nix:1)
+   - Run large language models locally (Go + CMake + native backends)
+   - Supports CPU, ROCm (AMD), CUDA (NVIDIA), and Vulkan GPU acceleration
+   - Adapted from upstream nixpkgs; uses `proxyVendor = true` to include C sources for tree-sitter
+   - Variants: `ollama`, `ollama-rocm`, `ollama-cuda`, `ollama-vulkan`
+   - Use `scripts/update-ollama.sh` to update to latest release
+   - Version: 0.20.0
+
+5. **openclaw** (pkgs/openclaw/default.nix:1)
    - Multi-channel AI gateway (Node.js)
    - Built from pre-compiled npm registry tarball using `buildNpmPackage`
    - Requires Node.js 24; includes generated `package-lock.json`
@@ -148,6 +157,22 @@ nix-instantiate --parse flake.nix
    ```
 5. Test build: `nix build .#new-package`
 6. Verify metadata: `nix eval .#packages.x86_64-linux.new-package.meta --json | jq`
+
+### Updating ollama
+
+```bash
+# Update to latest release (fetches version from GitHub, updates hashes automatically)
+./scripts/update-ollama.sh
+
+# Or pin to a specific version
+./scripts/update-ollama.sh 0.21.0
+
+# Verify
+nix build .#ollama
+```
+
+Note: ollama uses `proxyVendor = true` because v0.16+ depends on `tree-sitter` C sources
+that `go mod vendor` omits. The proxy module cache includes all files.
 
 ### Updating openclaw
 

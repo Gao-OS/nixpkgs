@@ -38,6 +38,10 @@
           code-server-latest = pkgs.code-server-latest;
           pmbootstrap-new = pkgs.pmbootstrap-new;
           openclaw = pkgs.openclaw;
+          ollama = pkgs.ollama;
+          ollama-rocm = pkgs.ollama-rocm;
+          ollama-cuda = pkgs.ollama-cuda;
+          ollama-vulkan = pkgs.ollama-vulkan;
 
           # Default package
           default = pkgs.caddy-with-plugins;
