@@ -54,6 +54,7 @@
 
       # NixOS modules
       nixosModules.openclaw = import ./modules/nixos/openclaw.nix;
+      nixosModules.ollama-docker = import ./modules/nixos/ollama-docker.nix;
 
       # Legacy package output (for nix-build support)
       legacyPackages = forAllSystems (system: nixpkgsFor.${system});
