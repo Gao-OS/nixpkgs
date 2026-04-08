@@ -7,22 +7,22 @@
     if stdenv.hostPlatform.system == "x86_64-linux"
     then {
       name = "linux_amd64";
-      hash = "sha256-4ip4SmG+0PmubRtuJaI61ltbMrwP+QB1Ci8BsWH5M7A=";
+      hash = "sha256-8e/Xhj+fKSCm+Nvuh85t/+NUqWSqTIDm5YIV3hY4V3c=";
     }
     else if stdenv.hostPlatform.system == "aarch64-linux"
     then {
       name = "linux_arm64";
-      hash = "sha256-miuwZoanzGpO3nh/fIPUV/GL/JI1/l8yhPy85xiMTrI=";
+      hash = "sha256-m6RggyzqSWZboTsSLKlDkk+KXS/2D4fMgpJ3iake41c=";
     }
     else if stdenv.hostPlatform.system == "x86_64-darwin"
     then {
       name = "darwin_amd64";
-      hash = "sha256-eaDv04NZBReWXltLYn/p71l8XvOBRj31kqR19luYwaw=";
+      hash = "sha256-cu+CrsuNpcxeZJCgOtCEpIuEg5t8Zb+R1gu3fstdITU=";
     }
     else if stdenv.hostPlatform.system == "aarch64-darwin"
     then {
       name = "darwin_arm64";
-      hash = "sha256-fLfb8I73VrWoRCmiIsxK2+T0XcugH8qF1NkY+HNCzLo=";
+      hash = "sha256-/MjMeJFXPq6zv2aCeMcYFY62oZ9y6HpcY5uzdoW1FUY=";
     }
     else throw "Unsupported platform: ${stdenv.hostPlatform.system}";
 in
