@@ -134,6 +134,8 @@ in {
           OPENCLAW_PORT = toString cfg.port;
           OPENCLAW_HOST = cfg.bindAddress;
           OPENCLAW_STATE_DIR = cfg.stateDir;
+          # Point to the config inside .openclaw/ (2026.4.5 changed default to ~/openclaw.json)
+          OPENCLAW_CONFIG_PATH = "${cfg.stateDir}/.openclaw/openclaw.json";
           # Disable any built-in self-update logic.
           OPENCLAW_NO_UPDATE = "1";
           # Plug is publish in ts source
