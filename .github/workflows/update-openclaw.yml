@@ -1,0 +1,91 @@
+name: Update OpenClaw
+
+on:
+  schedule:
+    - cron: "23 8 * * *" # Daily at 08:23 UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get current and latest versions
+        id: versions
+        run: |
+          current=$(grep -Po '^\s*version\s*=\s*"\K[^"]+' pkgs/openclaw/default.nix)
+          latest=$(curl -sf https://registry.npmjs.org/openclaw/latest | jq -r .version)
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          if [ "$current" = "$latest" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "OpenClaw is up to date ($current)"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Update available: $current -> $latest"
+          fi
+
+      - name: Install Nix
+        if: steps.versions.outputs.skip == 'false'
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Regenerate package-lock.json
+        if: steps.versions.outputs.skip == 'false'
+        run: ./scripts/gen-openclaw-lockfile.sh "${{ steps.versions.outputs.latest }}"
+
+      - name: Update version and extract hashes
+        if: steps.versions.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.versions.outputs.latest }}"
+          NIX_FILE="pkgs/openclaw/default.nix"
+
+          # Update version
+          sed -i "s/version = \".*\"/version = \"${VERSION}\"/" "$NIX_FILE"
+
+          # --- src.hash ---
+          sed -i '/^\s*src = fetchurl/,/};/{s/hash = ".*"/hash = ""/}' "$NIX_FILE"
+          src_hash=$(nix build .#openclaw 2>&1 | grep -Po '^\s+got:\s+\Ksha256-.*' || true)
+          if [ -z "$src_hash" ]; then
+            echo "::error::Failed to extract src hash"
+            exit 1
+          fi
+          sed -i '/^\s*src = fetchurl/,/};/{s|hash = ""|hash = "'"$src_hash"'"|}'  "$NIX_FILE"
+          echo "src.hash = $src_hash"
+
+          # --- npmDepsHash ---
+          sed -i 's/npmDepsHash = ".*"/npmDepsHash = ""/' "$NIX_FILE"
+          npm_hash=$(nix build .#openclaw 2>&1 | grep -Po '^\s+got:\s+\Ksha256-.*' || true)
+          if [ -z "$npm_hash" ]; then
+            echo "::error::Failed to extract npmDepsHash"
+            exit 1
+          fi
+          sed -i 's|npmDepsHash = ""|npmDepsHash = "'"$npm_hash"'"|' "$NIX_FILE"
+          echo "npmDepsHash = $npm_hash"
+
+      - name: Verify build
+        if: steps.versions.outputs.skip == 'false'
+        run: nix build .#openclaw
+
+      - name: Create Pull Request
+        if: steps.versions.outputs.skip == 'false'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: update/openclaw-${{ steps.versions.outputs.latest }}
+          commit-message: "feat(openclaw): update to ${{ steps.versions.outputs.latest }}"
+          title: "feat(openclaw): update to ${{ steps.versions.outputs.latest }}"
+          body: |
+            Automated update of OpenClaw from `${{ steps.versions.outputs.current }}` to `${{ steps.versions.outputs.latest }}`.
+
+            - [Release notes](https://github.com/openclaw/openclaw/releases/tag/v${{ steps.versions.outputs.latest }})
+            - [npm package](https://www.npmjs.com/package/openclaw/v/${{ steps.versions.outputs.latest }})
+
+            ---
+            *This PR was created automatically by the [update-openclaw](${{ github.server_url }}/${{ github.repository }}/actions/workflows/update-openclaw.yml) workflow.*
+          labels: automated
+          delete-branch: true
