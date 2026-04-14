@@ -77,7 +77,7 @@ in {
       volumes = ["${cfg.dataDir}:/root/.ollama"];
       environment = cfg.extraEnvironment;
       environmentFiles = lib.optional (cfg.environmentFile != null) cfg.environmentFile;
-      extraOptions = ["--gpus" "all"];
+      extraOptions = ["--device" "nvidia.com/gpu=all"];
     };
 
     systemd.tmpfiles.rules = [
