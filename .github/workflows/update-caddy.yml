@@ -1,0 +1,94 @@
+name: Update Caddy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-caddy
+  cancel-in-progress: false
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch main
+        run: |
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
+
+      - name: Check latest Caddy release
+        id: caddy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          nix_file="pkgs/caddy/default.nix"
+          release_json="$(curl -fsSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/gsmlg-ci/caddy/releases/latest")"
+
+          tag="$(jq -r '.tag_name' <<< "$release_json")"
+          if [ -z "$tag" ] || [ "$tag" = "null" ]; then
+            echo "::error::Failed to read latest gsmlg-ci/caddy release tag"
+            exit 1
+          fi
+
+          version="${tag#v}"
+          current_version="$(grep -Po '^\s*version\s*=\s*"\K[^"]+' "$nix_file")"
+
+          declare -A hashes
+          for arch in linux_amd64 linux_arm64 darwin_amd64 darwin_arm64; do
+            asset="caddy_${arch}"
+            digest="$(jq -r --arg asset "$asset" '.assets[] | select(.name == $asset) | .digest' <<< "$release_json")"
+            if [ -z "$digest" ] || [ "$digest" = "null" ]; then
+              echo "::error::Release ${tag} does not contain a digest for asset ${asset}"
+              exit 1
+            fi
+
+            digest_hex="${digest#sha256:}"
+            hashes[$arch]="sha256-$(perl -MMIME::Base64 -e 'print encode_base64(pack("H*", $ARGV[0]), "")' "$digest_hex")"
+          done
+
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$tmpdir"' EXIT
+          cp "$nix_file" "${tmpdir}/default.nix.before"
+
+          perl -0pi -e "s/version = \"[^\"]+\"/version = \"${version}\"/" "$nix_file"
+          perl -0pi -e 's#(name = "linux_amd64";\n\s*hash = ")[^"]+(")#${1}'"${hashes[linux_amd64]}"'${2}#' "$nix_file"
+          perl -0pi -e 's#(name = "linux_arm64";\n\s*hash = ")[^"]+(")#${1}'"${hashes[linux_arm64]}"'${2}#' "$nix_file"
+          perl -0pi -e 's#(name = "darwin_amd64";\n\s*hash = ")[^"]+(")#${1}'"${hashes[darwin_amd64]}"'${2}#' "$nix_file"
+          perl -0pi -e 's#(name = "darwin_arm64";\n\s*hash = ")[^"]+(")#${1}'"${hashes[darwin_arm64]}"'${2}#' "$nix_file"
+
+          if cmp -s "$nix_file" "${tmpdir}/default.nix.before"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Caddy is up to date (${current_version})"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "version=${version}" >> "$GITHUB_OUTPUT"
+            echo "current_version=${current_version}" >> "$GITHUB_OUTPUT"
+            echo "Caddy update detected: ${current_version} -> ${version}"
+          fi
+
+      - name: Commit and push
+        if: steps.caddy.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pkgs/caddy/default.nix
+          git commit -m "feat(caddy): update to ${{ steps.caddy.outputs.version }}"
+          git push origin HEAD:main
