@@ -7,7 +7,7 @@
     if stdenv.hostPlatform.system == "x86_64-linux"
     then {
       name = "linux_amd64";
-      hash = "sha256-8e/Xhj+fKSCm+Nvuh85t/+NUqWSqTIDm5YIV3hY4V3c=";
+      hash = "sha256-ym4zeRWwX9X3qluIBtQHjm7VVtOQvE8UGtJrEzVOPOo=";
     }
     else if stdenv.hostPlatform.system == "aarch64-linux"
     then {
