@@ -14,7 +14,7 @@
   yarn,
   python3,
   esbuild,
-  nodejs,
+  nodejs_22,
   node-gyp,
   libsecret,
   xorg,
@@ -27,6 +27,7 @@
 
 let
   system = stdenv.hostPlatform.system;
+  nodejs = nodejs_22;
 
   python = python3;
   yarn' = yarn.override { inherit nodejs; };

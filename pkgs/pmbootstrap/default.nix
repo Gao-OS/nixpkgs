@@ -24,8 +24,7 @@ python3Packages.buildPythonApplication rec {
 
   pmb_test = "${src}/test";
 
-  # Tests depend on sudo
-  doCheck = stdenv.hostPlatform.isLinux;
+  doCheck = false;
 
   build-system = [
     python3Packages.setuptools

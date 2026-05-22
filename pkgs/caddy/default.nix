@@ -22,7 +22,7 @@
     else if stdenv.hostPlatform.system == "aarch64-darwin"
     then {
       name = "darwin_arm64";
-      hash = "sha256-/MjMeJFXPq6zv2aCeMcYFY62oZ9y6HpcY5uzdoW1FUY=";
+      hash = "sha256-8adRmNFLE6wAs8Ha18k+xmqgn8gnOlFZO3nZL8cdVE4=";
     }
     else throw "Unsupported platform: ${stdenv.hostPlatform.system}";
 in
