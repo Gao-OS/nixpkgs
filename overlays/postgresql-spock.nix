@@ -86,7 +86,7 @@ final: prev: let
   postgresql_17_spock = mkPostgresqlSpock prev.postgresql_17 "17";
   postgresql_18_spock = mkPostgresqlSpock prev.postgresql_18 "18";
 
-  # In nixpkgs 25.11, pg_config binary is replaced with pg_config.expected (a static file).
+  # Current nixpkgs PostgreSQL exposes pg_config data through pg_config.expected.
   # We create a shell wrapper that PGXS-based extensions can call during the build.
   mkPgConfigWrapper = pgSpock:
     prev.writeShellScriptBin "pg_config" ''

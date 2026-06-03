@@ -5,10 +5,10 @@ Custom package collection for GaoOS, providing additional packages and tools not
 ## Available Packages
 
 - **caddy-with-plugins**: Caddy web server with custom plugins from gsmlg-dev Foundation
-- **code-server-latest**: VS Code running on a remote server (v4.105.1)
-- **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.3.2)
-- **openclaw**: Multi-channel AI gateway (v2026.3.31)
-- **ollama** / **ollama-rocm** / **ollama-cuda** / **ollama-vulkan**: Run large language models locally (from upstream nixpkgs)
+- **code-server-latest**: VS Code running on a remote server (v4.115.0)
+- **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.6.0)
+- **openclaw**: Multi-channel AI gateway (v2026.5.19)
+- **ollama** / **ollama-rocm** / **ollama-cuda** / **ollama-vulkan**: Run large language models locally (from upstream nixpkgs, where supported; ROCm/CUDA variants are x86_64-linux only)
 
 ## Usage
 
