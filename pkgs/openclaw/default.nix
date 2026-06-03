@@ -47,6 +47,7 @@ buildNpmPackage rec {
   # postPatch is inherited by the internal fetchNpmDeps derivation, which has
   # a minimal build environment — only copy the lockfile here.
   postPatch = ''
+    rm -f npm-shrinkwrap.json
     cp ${./package-lock.json} package-lock.json
   '';
 
