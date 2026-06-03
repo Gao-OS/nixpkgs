@@ -39,21 +39,26 @@
         let
           pkgs = nixpkgsFor.${system};
           isLinux = builtins.elem system [ "x86_64-linux" "aarch64-linux" ];
+          isX86Linux = system == "x86_64-linux";
+          optionalAvailablePackage = condition: name: package:
+            nixpkgs.lib.optionalAttrs (condition && nixpkgs.lib.meta.availableOn pkgs.stdenv.hostPlatform package) {
+              ${name} = package;
+            };
         in
         {
           # Export all packages
           caddy-with-plugins = pkgs.caddy-with-plugins;
-          code-server-latest = pkgs.code-server-latest;
           pmbootstrap-new = pkgs.pmbootstrap-new;
           openclaw = pkgs.openclaw;
-          ollama = pkgs.ollama;
-          ollama-rocm = pkgs.ollama-rocm;
-          ollama-cuda = pkgs.ollama-cuda;
-          ollama-vulkan = pkgs.ollama-vulkan;
 
           # Default package
           default = pkgs.caddy-with-plugins;
         }
+        // optionalAvailablePackage true "code-server-latest" pkgs.code-server-latest
+        // optionalAvailablePackage true "ollama" pkgs.ollama
+        // optionalAvailablePackage isX86Linux "ollama-rocm" pkgs.ollama-rocm
+        // optionalAvailablePackage isX86Linux "ollama-cuda" pkgs.ollama-cuda
+        // optionalAvailablePackage isLinux "ollama-vulkan" pkgs.ollama-vulkan
         // nixpkgs.lib.optionalAttrs isLinux {
           inherit (pkgs) postgresql_16_spock postgresql_17_spock postgresql_18_spock;
           inherit (pkgs.postgresqlPackages_spock) spock_16 spock_17 spock_18;
