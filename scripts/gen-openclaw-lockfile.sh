@@ -72,7 +72,13 @@ print(f"devDependencies kept: {len(root.get('devDependencies', {}))}")
 PYEOF
 
 echo "==> Running npm install --package-lock-only..."
-npm install --package-lock-only --ignore-scripts 2>&1 | tail -3
+rm -f npm-shrinkwrap.json
+npm install --package-lock-only --package-lock=true --ignore-scripts 2>&1 | tail -3
+
+if [ ! -f package-lock.json ]; then
+  echo "::error::npm did not generate package-lock.json"
+  exit 1
+fi
 
 LOCKFILE_COUNT=$(python3 -c "import json; d=json.load(open('package-lock.json')); print(len(d['packages']))")
 echo "==> Generated lockfile with ${LOCKFILE_COUNT} packages"
