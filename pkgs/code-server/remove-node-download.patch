@@ -1,28 +1,10 @@
---- a/lib/vscode/build/gulpfile.reh.js
-+++ b/lib/vscode/build/gulpfile.reh.js
-@@ -341,9 +341,6 @@
- 			.pipe(util.stripSourceMappingURL())
- 			.pipe(jsFilter.restore);
-
+--- a/lib/vscode/build/gulpfile.reh.ts
++++ b/lib/vscode/build/gulpfile.reh.ts
+@@ -349,3 +348,0 @@
 -		const nodePath = `.build/node/v${nodeVersion}/${platform}-${arch}`;
 -		const node = gulp.src(`${nodePath}/**`, { base: nodePath, dot: true });
 -
- 		let web = [];
- 		if (type === 'reh-web') {
- 			web = [
-@@ -357,7 +354,6 @@
- 			license,
- 			sources,
- 			deps,
+@@ -368 +364,0 @@
 -			node,
- 			...web
- 		);
-
-@@ -468,7 +464,6 @@
-
- 			const serverTaskCI = task.define(`vscode-${type}${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(
- 				compileNativeExtensionsBuildTask,
--				gulp.task(`node-${platform}-${arch}`),
- 				util.rimraf(path.join(BUILD_ROOT, destinationFolderName)),
- 				packageTask(type, platform, arch, sourceFolderName, destinationFolderName)
- 			));
+@@ -515 +510,0 @@
+-				gulp.task(`node-${platform}-${arch}`) as task.Task,
