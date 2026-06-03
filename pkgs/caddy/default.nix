@@ -12,12 +12,12 @@
     else if stdenv.hostPlatform.system == "aarch64-linux"
     then {
       name = "linux_arm64";
-      hash = "sha256-m6RggyzqSWZboTsSLKlDkk+KXS/2D4fMgpJ3iake41c=";
+      hash = "sha256-1tpbfROWPTrODIC48a12X94RzumvbUPVBhQxYhlibvA=";
     }
     else if stdenv.hostPlatform.system == "x86_64-darwin"
     then {
       name = "darwin_amd64";
-      hash = "sha256-cu+CrsuNpcxeZJCgOtCEpIuEg5t8Zb+R1gu3fstdITU=";
+      hash = "sha256-Y0lPqlFzNPsdR7CmM/r9eCA+AYt+2YSH6/Gw4yBDZnA=";
     }
     else if stdenv.hostPlatform.system == "aarch64-darwin"
     then {
