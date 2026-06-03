@@ -12,6 +12,7 @@
 #   2. Merges all extensions/*/package.json deps into the root package.json
 #   3. Preserves devDependencies from the root (required for lockfile consistency)
 #   4. Runs npm install --package-lock-only to produce a complete lockfile
+#   5. Copies the matching package.json and package-lock.json to pkgs/openclaw
 #
 # Usage:
 #   ./scripts/gen-openclaw-lockfile.sh <version>
@@ -28,7 +29,9 @@ VERSION="${1:?Usage: $0 <version>}"
 REPO="openclaw/openclaw"
 TAG="v${VERSION}"
 WORKDIR="/tmp/openclaw-lockgen-${VERSION}"
-DEST="$(cd "$(dirname "$0")/.." && pwd)/pkgs/openclaw/package-lock.json"
+DEST_DIR="$(cd "$(dirname "$0")/.." && pwd)/pkgs/openclaw"
+PACKAGE_JSON_DEST="${DEST_DIR}/package.json"
+LOCKFILE_DEST="${DEST_DIR}/package-lock.json"
 
 echo "==> Cloning openclaw ${TAG}..."
 rm -rf "$WORKDIR"
@@ -83,8 +86,10 @@ fi
 LOCKFILE_COUNT=$(python3 -c "import json; d=json.load(open('package-lock.json')); print(len(d['packages']))")
 echo "==> Generated lockfile with ${LOCKFILE_COUNT} packages"
 
-cp package-lock.json "$DEST"
-echo "==> Copied to ${DEST}"
+cp package.json "$PACKAGE_JSON_DEST"
+cp package-lock.json "$LOCKFILE_DEST"
+echo "==> Copied to ${PACKAGE_JSON_DEST}"
+echo "==> Copied to ${LOCKFILE_DEST}"
 echo ""
 echo "Next steps — update pkgs/openclaw/default.nix:"
 echo "  1. version = \"${VERSION}\""

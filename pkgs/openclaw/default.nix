@@ -40,14 +40,15 @@ buildNpmPackage rec {
   sourceRoot = "package";
 
   # Generated from package-lock.json (see update instructions above)
-  npmDepsHash = "sha256-wdidq7VjTl1+AnctbO53KOpevMyNWl5vEb8MQDrEyQg=";
+  npmDepsHash = "sha256-yaKvfO7VW5jy++lYJTn0StF0r87ln5+tirj8/95/j1s=";
 
   nativeBuildInputs = [ makeWrapper jq ];
 
   # postPatch is inherited by the internal fetchNpmDeps derivation, which has
-  # a minimal build environment — only copy the lockfile here.
+  # a minimal build environment — only copy generated npm metadata here.
   postPatch = ''
     rm -f npm-shrinkwrap.json
+    cp ${./package.json} package.json
     cp ${./package-lock.json} package-lock.json
   '';
 
