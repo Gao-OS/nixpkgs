@@ -1,6 +1,6 @@
 {
   "name": "openclaw",
-  "version": "2026.5.19",
+  "version": "2026.5.28",
   "description": "Multi-channel AI gateway with extensible messaging integrations",
   "keywords": [],
   "homepage": "https://github.com/openclaw/openclaw#readme",
@@ -23,14 +23,56 @@
   "files": [
     "CHANGELOG.md",
     "LICENSE",
+    "npm-shrinkwrap.json",
     "openclaw.mjs",
     "pnpm-workspace.yaml",
     "README.md",
+    "THIRD_PARTY_NOTICES.md",
     "dist/",
     "!dist/.buildstamp",
     "!dist/.runtime-postbuildstamp",
     "!dist/**/*.map",
     "!dist/plugin-sdk/.tsbuildinfo",
+    "!dist/plugin-sdk/agent-runtime-test-contracts.js",
+    "!dist/plugin-sdk/agent-runtime-test-contracts.d.ts",
+    "!dist/plugin-sdk/channel-contract-testing.js",
+    "!dist/plugin-sdk/channel-contract-testing.d.ts",
+    "!dist/plugin-sdk/channel-target-testing.js",
+    "!dist/plugin-sdk/channel-target-testing.d.ts",
+    "!dist/plugin-sdk/channel-test-helpers.js",
+    "!dist/plugin-sdk/channel-test-helpers.d.ts",
+    "!dist/plugin-sdk/codex-native-task-runtime.js",
+    "!dist/plugin-sdk/codex-native-task-runtime.d.ts",
+    "!dist/plugin-sdk/plugin-test-api.js",
+    "!dist/plugin-sdk/plugin-test-api.d.ts",
+    "!dist/plugin-sdk/plugin-test-contracts.js",
+    "!dist/plugin-sdk/plugin-test-contracts.d.ts",
+    "!dist/plugin-sdk/plugin-state-test-runtime.js",
+    "!dist/plugin-sdk/plugin-state-test-runtime.d.ts",
+    "!dist/plugin-sdk/plugin-test-runtime.js",
+    "!dist/plugin-sdk/plugin-test-runtime.d.ts",
+    "!dist/plugin-sdk/provider-http-test-mocks.js",
+    "!dist/plugin-sdk/provider-http-test-mocks.d.ts",
+    "!dist/plugin-sdk/provider-test-contracts.js",
+    "!dist/plugin-sdk/provider-test-contracts.d.ts",
+    "!dist/plugin-sdk/reply-payload-testing.js",
+    "!dist/plugin-sdk/reply-payload-testing.d.ts",
+    "!dist/plugin-sdk/ssrf-runtime-internal.js",
+    "!dist/plugin-sdk/ssrf-runtime-internal.d.ts",
+    "!dist/plugin-sdk/test-env.js",
+    "!dist/plugin-sdk/test-env.d.ts",
+    "!dist/plugin-sdk/test-fixtures.js",
+    "!dist/plugin-sdk/test-fixtures.d.ts",
+    "!dist/plugin-sdk/test-node-mocks.js",
+    "!dist/plugin-sdk/test-node-mocks.d.ts",
+    "!dist/plugin-sdk/test-utils.js",
+    "!dist/plugin-sdk/test-utils.d.ts",
+    "!dist/plugin-sdk/testing.js",
+    "!dist/plugin-sdk/testing.d.ts",
+    "!dist/plugin-sdk/src/agents/test-helpers/**",
+    "!dist/plugin-sdk/src/test-helpers/**",
+    "!dist/plugin-sdk/src/test-utils/**",
+    "!dist/plugin-sdk/src/plugin-sdk/test-helpers/**",
     "!dist/extensions/acpx/**",
     "!dist/extensions/amazon-bedrock/**",
     "!dist/extensions/amazon-bedrock-mantle/**",
@@ -39,9 +81,11 @@
     "!dist/extensions/*/node_modules/**",
     "!dist/extensions/brave/**",
     "!dist/extensions/codex/**",
+    "!dist/extensions/copilot/**",
     "!dist/extensions/diagnostics-otel/**",
     "!dist/extensions/diagnostics-prometheus/**",
     "!dist/extensions/diffs/**",
+    "!dist/extensions/diffs-language-pack/**",
     "!dist/extensions/discord/**",
     "!dist/extensions/feishu/**",
     "!dist/extensions/google-meet/**",
@@ -54,12 +98,14 @@
     "!dist/extensions/nextcloud-talk/**",
     "!dist/extensions/nostr/**",
     "!dist/extensions/qqbot/**",
+    "!dist/extensions/pixverse/**",
     "!dist/extensions/qa-channel/**",
     "!dist/extensions/qa-lab/**",
     "!dist/extensions/qa-matrix/**",
     "!dist/extensions/openshell/**",
     "!dist/extensions/slack/**",
     "!dist/extensions/synology-chat/**",
+    "!dist/extensions/tokenjuice/**",
     "!dist/extensions/tlon/**",
     "!dist/extensions/twitch/**",
     "!dist/extensions/voice-call/**",
@@ -72,6 +118,7 @@
     "!dist/plugin-sdk/qa-channel-protocol.*",
     "!dist/plugin-sdk/qa-lab.*",
     "!dist/plugin-sdk/qa-runtime.*",
+    "!dist/plugin-sdk/src/**",
     "!dist/plugin-sdk/src/plugin-sdk/qa-channel.d.ts",
     "!dist/plugin-sdk/src/plugin-sdk/qa-channel-protocol.d.ts",
     "!dist/plugin-sdk/src/plugin-sdk/qa-lab.d.ts",
@@ -80,10 +127,16 @@
     "docs/",
     "!docs/.generated/**",
     "!docs/channels/qa-channel.md",
+    "!docs/assets/**",
+    "!docs/images/**",
+    "!docs/**/*.jpg",
+    "!docs/**/*.png",
+    "src/agents/templates/",
     "scripts/crabbox-wrapper.mjs",
     "patches/",
     "skills/",
     "scripts/npm-runner.mjs",
+    "scripts/prepare-git-hooks.mjs",
     "scripts/preinstall-package-manager-warning.mjs",
     "scripts/lib/official-external-channel-catalog.json",
     "scripts/lib/official-external-plugin-catalog.json",
@@ -212,6 +265,10 @@
       "types": "./dist/plugin-sdk/approval-native-runtime.d.ts",
       "default": "./dist/plugin-sdk/approval-native-runtime.js"
     },
+    "./plugin-sdk/approval-reaction-runtime": {
+      "types": "./dist/plugin-sdk/approval-reaction-runtime.d.ts",
+      "default": "./dist/plugin-sdk/approval-reaction-runtime.js"
+    },
     "./plugin-sdk/approval-reply-runtime": {
       "types": "./dist/plugin-sdk/approval-reply-runtime.d.ts",
       "default": "./dist/plugin-sdk/approval-reply-runtime.js"
@@ -251,6 +308,10 @@
     "./plugin-sdk/json-schema-runtime": {
       "types": "./dist/plugin-sdk/json-schema-runtime.d.ts",
       "default": "./dist/plugin-sdk/json-schema-runtime.js"
+    },
+    "./plugin-sdk/json-unsafe-integers": {
+      "types": "./dist/plugin-sdk/json-unsafe-integers.d.ts",
+      "default": "./dist/plugin-sdk/json-unsafe-integers.js"
     },
     "./plugin-sdk/reply-runtime": {
       "types": "./dist/plugin-sdk/reply-runtime.d.ts",
@@ -368,6 +429,10 @@
       "types": "./dist/plugin-sdk/transport-ready-runtime.d.ts",
       "default": "./dist/plugin-sdk/transport-ready-runtime.js"
     },
+    "./plugin-sdk/exec-approvals-runtime": {
+      "types": "./dist/plugin-sdk/exec-approvals-runtime.d.ts",
+      "default": "./dist/plugin-sdk/exec-approvals-runtime.js"
+    },
     "./plugin-sdk/infra-runtime": {
       "types": "./dist/plugin-sdk/infra-runtime.d.ts",
       "default": "./dist/plugin-sdk/infra-runtime.js"
@@ -407,6 +472,10 @@
     "./plugin-sdk/media-mime": {
       "types": "./dist/plugin-sdk/media-mime.d.ts",
       "default": "./dist/plugin-sdk/media-mime.js"
+    },
+    "./plugin-sdk/embedding-providers": {
+      "types": "./dist/plugin-sdk/embedding-providers.d.ts",
+      "default": "./dist/plugin-sdk/embedding-providers.js"
     },
     "./plugin-sdk/media-generation-runtime": {
       "types": "./dist/plugin-sdk/media-generation-runtime.d.ts",
@@ -504,9 +573,9 @@
       "types": "./dist/plugin-sdk/codex-mcp-projection.d.ts",
       "default": "./dist/plugin-sdk/codex-mcp-projection.js"
     },
-    "./plugin-sdk/codex-native-task-runtime": {
-      "types": "./dist/plugin-sdk/codex-native-task-runtime.d.ts",
-      "default": "./dist/plugin-sdk/codex-native-task-runtime.js"
+    "./plugin-sdk/agent-harness-task-runtime": {
+      "types": "./dist/plugin-sdk/agent-harness-task-runtime.d.ts",
+      "default": "./dist/plugin-sdk/agent-harness-task-runtime.js"
     },
     "./plugin-sdk/agent-harness": {
       "types": "./dist/plugin-sdk/agent-harness.d.ts",
@@ -556,54 +625,6 @@
       "types": "./dist/plugin-sdk/lazy-runtime.d.ts",
       "default": "./dist/plugin-sdk/lazy-runtime.js"
     },
-    "./plugin-sdk/agent-runtime-test-contracts": {
-      "types": "./dist/plugin-sdk/agent-runtime-test-contracts.d.ts",
-      "default": "./dist/plugin-sdk/agent-runtime-test-contracts.js"
-    },
-    "./plugin-sdk/channel-target-testing": {
-      "types": "./dist/plugin-sdk/channel-target-testing.d.ts",
-      "default": "./dist/plugin-sdk/channel-target-testing.js"
-    },
-    "./plugin-sdk/channel-test-helpers": {
-      "types": "./dist/plugin-sdk/channel-test-helpers.d.ts",
-      "default": "./dist/plugin-sdk/channel-test-helpers.js"
-    },
-    "./plugin-sdk/plugin-test-api": {
-      "types": "./dist/plugin-sdk/plugin-test-api.d.ts",
-      "default": "./dist/plugin-sdk/plugin-test-api.js"
-    },
-    "./plugin-sdk/plugin-test-contracts": {
-      "types": "./dist/plugin-sdk/plugin-test-contracts.d.ts",
-      "default": "./dist/plugin-sdk/plugin-test-contracts.js"
-    },
-    "./plugin-sdk/plugin-test-runtime": {
-      "types": "./dist/plugin-sdk/plugin-test-runtime.d.ts",
-      "default": "./dist/plugin-sdk/plugin-test-runtime.js"
-    },
-    "./plugin-sdk/provider-http-test-mocks": {
-      "types": "./dist/plugin-sdk/provider-http-test-mocks.d.ts",
-      "default": "./dist/plugin-sdk/provider-http-test-mocks.js"
-    },
-    "./plugin-sdk/provider-test-contracts": {
-      "types": "./dist/plugin-sdk/provider-test-contracts.d.ts",
-      "default": "./dist/plugin-sdk/provider-test-contracts.js"
-    },
-    "./plugin-sdk/test-env": {
-      "types": "./dist/plugin-sdk/test-env.d.ts",
-      "default": "./dist/plugin-sdk/test-env.js"
-    },
-    "./plugin-sdk/test-fixtures": {
-      "types": "./dist/plugin-sdk/test-fixtures.d.ts",
-      "default": "./dist/plugin-sdk/test-fixtures.js"
-    },
-    "./plugin-sdk/test-node-mocks": {
-      "types": "./dist/plugin-sdk/test-node-mocks.d.ts",
-      "default": "./dist/plugin-sdk/test-node-mocks.js"
-    },
-    "./plugin-sdk/testing": {
-      "types": "./dist/plugin-sdk/testing.d.ts",
-      "default": "./dist/plugin-sdk/testing.js"
-    },
     "./plugin-sdk/temp-path": {
       "types": "./dist/plugin-sdk/temp-path.d.ts",
       "default": "./dist/plugin-sdk/temp-path.js"
@@ -623,6 +644,10 @@
     "./plugin-sdk/migration-runtime": {
       "types": "./dist/plugin-sdk/migration-runtime.d.ts",
       "default": "./dist/plugin-sdk/migration-runtime.js"
+    },
+    "./plugin-sdk/plugin-state-runtime": {
+      "types": "./dist/plugin-sdk/plugin-state-runtime.d.ts",
+      "default": "./dist/plugin-sdk/plugin-state-runtime.js"
     },
     "./plugin-sdk/markdown-table-runtime": {
       "types": "./dist/plugin-sdk/markdown-table-runtime.d.ts",
@@ -671,10 +696,6 @@
     "./plugin-sdk/boolean-param": {
       "types": "./dist/plugin-sdk/boolean-param.d.ts",
       "default": "./dist/plugin-sdk/boolean-param.js"
-    },
-    "./plugin-sdk/channel-contract-testing": {
-      "types": "./dist/plugin-sdk/channel-contract-testing.d.ts",
-      "default": "./dist/plugin-sdk/channel-contract-testing.js"
     },
     "./plugin-sdk/dangerous-name-runtime": {
       "types": "./dist/plugin-sdk/dangerous-name-runtime.d.ts",
@@ -856,6 +877,10 @@
       "types": "./dist/plugin-sdk/channel-message-runtime.d.ts",
       "default": "./dist/plugin-sdk/channel-message-runtime.js"
     },
+    "./plugin-sdk/channel-outbound": {
+      "types": "./dist/plugin-sdk/channel-outbound.d.ts",
+      "default": "./dist/plugin-sdk/channel-outbound.js"
+    },
     "./plugin-sdk/channel-pairing": {
       "types": "./dist/plugin-sdk/channel-pairing.d.ts",
       "default": "./dist/plugin-sdk/channel-pairing.js"
@@ -992,9 +1017,17 @@
       "types": "./dist/plugin-sdk/realtime-transcription.d.ts",
       "default": "./dist/plugin-sdk/realtime-transcription.js"
     },
+    "./plugin-sdk/realtime-bootstrap-context": {
+      "types": "./dist/plugin-sdk/realtime-bootstrap-context.d.ts",
+      "default": "./dist/plugin-sdk/realtime-bootstrap-context.js"
+    },
     "./plugin-sdk/realtime-voice": {
       "types": "./dist/plugin-sdk/realtime-voice.d.ts",
       "default": "./dist/plugin-sdk/realtime-voice.js"
+    },
+    "./plugin-sdk/transcripts": {
+      "types": "./dist/plugin-sdk/transcripts.d.ts",
+      "default": "./dist/plugin-sdk/transcripts.js"
     },
     "./plugin-sdk/media-understanding": {
       "types": "./dist/plugin-sdk/media-understanding.d.ts",
@@ -1344,75 +1377,97 @@
       "types": "./dist/plugin-sdk/zod.d.ts",
       "default": "./dist/plugin-sdk/zod.js"
     },
+    "./plugin-sdk/agent-core": {
+      "types": "./dist/plugin-sdk/agent-core.d.ts",
+      "default": "./dist/plugin-sdk/agent-core.js"
+    },
+    "./plugin-sdk/agent-sessions": {
+      "types": "./dist/plugin-sdk/agent-sessions.d.ts",
+      "default": "./dist/plugin-sdk/agent-sessions.js"
+    },
+    "./plugin-sdk/llm": {
+      "types": "./dist/plugin-sdk/llm.d.ts",
+      "default": "./dist/plugin-sdk/llm.js"
+    },
     "./extension-api": "./dist/extensionAPI.js",
     "./cli-entry": "./openclaw.mjs"
   },
   "dependencies": {
-    "@agentclientprotocol/sdk": "0.21.1",
+    "@agentclientprotocol/sdk": "0.22.1",
+    "@anthropic-ai/sdk": "0.98.0",
     "@clack/core": "1.3.1",
     "@clack/prompts": "1.4.0",
-    "@earendil-works/pi-agent-core": "0.75.1",
-    "@earendil-works/pi-ai": "0.75.1",
-    "@earendil-works/pi-coding-agent": "0.75.1",
-    "@earendil-works/pi-tui": "0.75.1",
-    "@google/genai": "2.3.0",
+    "@earendil-works/pi-tui": "0.76.0",
+    "@google/genai": "2.6.0",
     "@grammyjs/runner": "2.0.3",
     "@grammyjs/transformer-throttler": "1.2.1",
-    "@homebridge/ciao": "1.3.8",
+    "@homebridge/ciao": "1.3.9",
     "@lydell/node-pty": "1.2.0-beta.12",
+    "@mistralai/mistralai": "2.2.5",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@mozilla/readability": "0.6.0",
-    "@openclaw/fs-safe": "0.2.4",
+    "@openclaw/fs-safe": "0.3.0",
     "@openclaw/proxyline": "0.3.3",
-    "ajv": "8.20.0",
+    "@silvia-odwyer/photon-node": "0.3.4",
     "chalk": "5.6.2",
     "chokidar": "5.0.0",
+    "clawpdf": "0.2.0",
     "commander": "14.0.3",
     "croner": "10.0.1",
+    "cross-spawn": "7.0.6",
+    "diff": "9.0.0",
     "dotenv": "17.4.2",
     "express": "5.2.1",
     "file-type": "22.0.1",
-    "grammy": "1.42.0",
+    "glob": "13.0.6",
+    "grammy": "1.43.0",
+    "highlight.js": "11.11.1",
+    "hosted-git-info": "9.0.3",
+    "ignore": "7.0.5",
     "ipaddr.js": "2.4.0",
     "jiti": "2.7.0",
     "json5": "2.2.3",
     "jszip": "3.10.1",
-    "kysely": "0.29.1",
+    "kysely": "0.29.2",
     "linkedom": "0.18.12",
-    "markdown-it": "14.1.1",
+    "markdown-it": "14.2.0",
+    "minimatch": "10.2.5",
     "node-edge-tts": "1.2.10",
-    "openai": "6.38.0",
-    "pdfjs-dist": "5.7.284",
+    "openai": "6.39.0",
+    "partial-json": "0.1.7",
     "playwright-core": "1.60.0",
+    "proper-lockfile": "4.1.2",
     "qrcode": "1.5.4",
-    "quickjs-wasi": "2.2.0",
+    "quickjs-wasi": "3.0.0",
+    "rastermill": "0.3.0",
     "tar": "7.5.15",
-    "tokenjuice": "0.7.1",
     "tree-sitter-bash": "0.25.1",
     "tslog": "4.10.2",
     "typebox": "1.1.38",
     "typescript": "6.0.3",
     "undici": "8.3.0",
     "web-push": "3.6.7",
-    "web-tree-sitter": "0.26.8",
-    "ws": "8.20.1",
+    "web-tree-sitter": "0.26.9",
+    "ws": "8.21.0",
     "yaml": "2.9.0",
     "zod": "4.4.3",
-    "@agentclientprotocol/claude-agent-acp": "0.33.1",
-    "@zed-industries/codex-acp": "0.14.0",
-    "acpx": "0.7.0",
-    "@anthropic-ai/sdk": "0.95.2",
+    "@agentclientprotocol/claude-agent-acp": "0.37.0",
+    "@zed-industries/codex-acp": "0.15.0",
+    "acpx": "0.10.0",
     "@aws/bedrock-token-generator": "1.1.0",
-    "@aws-sdk/client-bedrock": "3.1047.0",
-    "@aws-sdk/client-bedrock-runtime": "3.1045.0",
-    "@aws-sdk/credential-provider-node": "3.972.41",
-    "@smithy/shared-ini-file-loader": "4.5.2",
-    "@anthropic-ai/vertex-sdk": "0.16.0",
+    "@aws-sdk/client-bedrock": "3.1053.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1053.0",
+    "@aws-sdk/credential-provider-node": "3.972.44",
+    "@smithy/node-http-handler": "4.7.4",
+    "@smithy/shared-ini-file-loader": "4.5.4",
+    "@smithy/types": "4.14.2",
+    "@anthropic-ai/vertex-sdk": "0.16.1",
     "@a2ui/lit": "0.10.0",
     "@lit/context": "1.1.6",
     "lit": "3.3.3",
-    "openclaw": ">=2026.5.19",
-    "@openai/codex": "0.130.0",
+    "openclaw": ">=2026.5.28",
+    "@openai/codex": "0.134.0",
+    "@github/copilot-sdk": "1.0.0-beta.4",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.218.0",
     "@opentelemetry/exporter-logs-otlp-proto": "0.218.0",
@@ -1424,78 +1479,80 @@
     "@opentelemetry/sdk-node": "0.218.0",
     "@opentelemetry/sdk-trace-base": "2.7.1",
     "@opentelemetry/semantic-conventions": "1.41.1",
-    "@pierre/diffs": "1.1.22",
-    "@pierre/theme": "0.0.29",
+    "@pierre/diffs": "1.2.3",
+    "@pierre/theme": "1.0.3",
+    "@shikijs/langs": "4.1.0",
     "@discordjs/voice": "0.19.2",
-    "discord-api-types": "0.38.47",
-    "https-proxy-agent": "9.0.0",
-    "opusscript": "0.1.1",
-    "@napi-rs/canvas": "^0.1.89",
-    "@larksuiteoapi/node-sdk": "1.64.0",
-    "minimatch": "10.2.5",
-    "gaxios": "7.1.4",
+    "discord-api-types": "0.38.48",
+    "libopus-wasm": "0.1.0",
+    "@larksuiteoapi/node-sdk": "1.66.0",
     "google-auth-library": "10.6.2",
+    "gaxios": "7.1.4",
     "@line/bot-sdk": "11.0.0",
-    "@clawdbot/lobster": "2026.4.6",
-    "@matrix-org/matrix-sdk-crypto-nodejs": "0.5.1",
+    "@clawdbot/lobster": "2026.5.22",
+    "@matrix-org/matrix-sdk-crypto-nodejs": "0.4.0",
     "@matrix-org/matrix-sdk-crypto-wasm": "18.3.0",
     "fake-indexeddb": "6.2.5",
-    "matrix-js-sdk": "41.5.0",
+    "matrix-js-sdk": "41.6.0",
     "music-metadata": "11.12.3",
-    "sharp": "0.34.5",
-    "@lancedb/lancedb": "0.27.2",
+    "@lancedb/lancedb": "0.29.0",
     "apache-arrow": "18.1.0",
     "@azure/identity": "4.13.1",
-    "@microsoft/teams.api": "2.0.11",
-    "@microsoft/teams.apps": "2.0.11",
-    "jsonwebtoken": "9.0.3",
-    "jwks-rsa": "4.0.1",
-    "nostr-tools": "2.23.3",
+    "@microsoft/teams.api": "2.0.12",
+    "@microsoft/teams.apps": "2.0.12",
+    "nostr-tools": "2.23.5",
     "jsonc-parser": "3.3.1",
-    "openshell": "0.1.0",
-    "@copilotkit/aimock": "1.24.1",
+    "@copilotkit/aimock": "1.27.1",
     "@tencent-connect/qqbot-connector": "1.1.0",
     "mpg123-decoder": "1.0.3",
     "silk-wasm": "3.7.1",
     "@slack/bolt": "4.7.2",
     "@slack/types": "2.21.1",
     "@slack/web-api": "7.16.0",
-    "@aws-sdk/client-s3": "3.1047.0",
-    "@aws-sdk/s3-request-presigner": "3.1047.0",
+    "@aws-sdk/client-s3": "3.1053.0",
+    "@aws-sdk/s3-request-presigner": "3.1053.0",
     "@tloncorp/tlon-skill": "0.4.0",
     "@urbit/aura": "3.0.0",
+    "tokenjuice": "0.8.0",
     "@twurple/api": "8.1.4",
     "@twurple/auth": "8.1.4",
     "@twurple/chat": "8.1.4",
     "audio-decode": "2.2.3",
-    "baileys": "7.0.0-rc11",
-    "jimp": "1.6.1",
+    "baileys": "7.0.0-rc13",
     "zca-js": "2.1.2"
   },
   "devDependencies": {
     "@a2ui/lit": "0.10.0",
-    "@copilotkit/aimock": "1.24.1",
+    "@copilotkit/aimock": "1.27.1",
     "@grammyjs/types": "3.27.3",
     "@lit-labs/signals": "0.3.0",
     "@lit/context": "1.1.6",
     "@mdx-js/mdx": "3.1.1",
+    "@shikijs/core": "4.1.0",
+    "@shikijs/engine-javascript": "4.1.0",
+    "@shikijs/engine-oniguruma": "4.1.0",
+    "@types/cross-spawn": "6.0.6",
     "@types/express": "5.0.6",
+    "@types/hosted-git-info": "3.0.5",
     "@types/markdown-it": "14.1.2",
-    "@types/node": "25.8.0",
+    "@types/node": "25.9.1",
+    "@types/proper-lockfile": "4.1.4",
     "@types/ws": "8.18.1",
-    "@typescript/native-preview": "7.0.0-dev.20260517.1",
-    "@vitest/coverage-v8": "4.1.6",
-    "jscpd": "4.2.2",
+    "@typescript/native-preview": "7.0.0-dev.20260527.2",
+    "@vitest/coverage-v8": "4.1.7",
+    "esbuild": "0.28.0",
+    "jscpd": "4.2.4",
     "jsdom": "29.1.1",
     "lit": "3.3.3",
-    "oxfmt": "0.50.0",
-    "oxlint": "1.65.0",
-    "oxlint-tsgolint": "0.22.1",
+    "oxfmt": "0.52.0",
+    "oxlint": "1.67.0",
+    "oxlint-tsgolint": "0.23.0",
+    "shiki": "4.1.0",
     "signal-utils": "0.21.1",
     "tsdown": "0.22.0",
-    "tsx": "4.22.0",
+    "tsx": "4.22.3",
     "unrun": "0.3.0",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   },
   "overrides": {
     "axios": "1.16.0",
@@ -1508,5 +1565,5 @@
   "engines": {
     "node": ">=22.19.0"
   },
-  "packageManager": "pnpm@11.1.0+sha512.0c44e842e5686b2c061a81adda8b2258bd8818e9704b2cf2c63d56b931a7b2e910092e085027003b96ca3911ab56a07f6df5abaed2be9925034cdd686a535b14"
+  "packageManager": "pnpm@11.2.2+sha512.36e6621fad506178936455e70247b8808ef4ec25797a9f437a93281a020484e2607f6a469a22e982987c3dbb8866e3071514ab10a4a1749e06edcd1ec118436f"
 }
