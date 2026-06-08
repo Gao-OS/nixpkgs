@@ -1,6 +1,6 @@
 {
   "name": "openclaw",
-  "version": "2026.5.28",
+  "version": "2026.6.1",
   "description": "Multi-channel AI gateway with extensible messaging integrations",
   "keywords": [],
   "homepage": "https://github.com/openclaw/openclaw#readme",
@@ -545,6 +545,10 @@
       "types": "./dist/plugin-sdk/secret-ref-runtime.d.ts",
       "default": "./dist/plugin-sdk/secret-ref-runtime.js"
     },
+    "./plugin-sdk/secret-provider-integration": {
+      "types": "./dist/plugin-sdk/secret-provider-integration.d.ts",
+      "default": "./dist/plugin-sdk/secret-provider-integration.js"
+    },
     "./plugin-sdk/secret-file-runtime": {
       "types": "./dist/plugin-sdk/secret-file-runtime.d.ts",
       "default": "./dist/plugin-sdk/secret-file-runtime.js"
@@ -801,6 +805,10 @@
       "types": "./dist/plugin-sdk/bundled-channel-config-schema.d.ts",
       "default": "./dist/plugin-sdk/bundled-channel-config-schema.js"
     },
+    "./plugin-sdk/chat-channel-ids": {
+      "types": "./dist/plugin-sdk/chat-channel-ids.d.ts",
+      "default": "./dist/plugin-sdk/chat-channel-ids.js"
+    },
     "./plugin-sdk/channel-config-schema-legacy": {
       "types": "./dist/plugin-sdk/channel-config-schema-legacy.d.ts",
       "default": "./dist/plugin-sdk/channel-config-schema-legacy.js"
@@ -920,6 +928,10 @@
     "./plugin-sdk/runtime-fetch": {
       "types": "./dist/plugin-sdk/runtime-fetch.d.ts",
       "default": "./dist/plugin-sdk/runtime-fetch.js"
+    },
+    "./plugin-sdk/inline-image-data-url-runtime": {
+      "types": "./dist/plugin-sdk/inline-image-data-url-runtime.d.ts",
+      "default": "./dist/plugin-sdk/inline-image-data-url-runtime.js"
     },
     "./plugin-sdk/response-limit-runtime": {
       "types": "./dist/plugin-sdk/response-limit-runtime.d.ts",
@@ -1065,6 +1077,10 @@
       "types": "./dist/plugin-sdk/qa-runner-runtime.d.ts",
       "default": "./dist/plugin-sdk/qa-runner-runtime.js"
     },
+    "./plugin-sdk/qa-live-transport-scenarios": {
+      "types": "./dist/plugin-sdk/qa-live-transport-scenarios.d.ts",
+      "default": "./dist/plugin-sdk/qa-live-transport-scenarios.js"
+    },
     "./plugin-sdk/memory-core": {
       "types": "./dist/plugin-sdk/memory-core.d.ts",
       "default": "./dist/plugin-sdk/memory-core.js"
@@ -1072,6 +1088,10 @@
     "./plugin-sdk/memory-core-engine-runtime": {
       "types": "./dist/plugin-sdk/memory-core-engine-runtime.d.ts",
       "default": "./dist/plugin-sdk/memory-core-engine-runtime.js"
+    },
+    "./plugin-sdk/memory-core-host-embedding-registry": {
+      "types": "./dist/plugin-sdk/memory-core-host-embedding-registry.d.ts",
+      "default": "./dist/plugin-sdk/memory-core-host-embedding-registry.js"
     },
     "./plugin-sdk/memory-core-host-engine-embeddings": {
       "types": "./dist/plugin-sdk/memory-core-host-engine-embeddings.d.ts",
@@ -1164,6 +1184,10 @@
     "./plugin-sdk/provider-auth": {
       "types": "./dist/plugin-sdk/provider-auth.d.ts",
       "default": "./dist/plugin-sdk/provider-auth.js"
+    },
+    "./plugin-sdk/provider-oauth-runtime": {
+      "types": "./dist/plugin-sdk/provider-oauth-runtime.d.ts",
+      "default": "./dist/plugin-sdk/provider-oauth-runtime.js"
     },
     "./plugin-sdk/provider-auth-runtime": {
       "types": "./dist/plugin-sdk/provider-auth-runtime.d.ts",
@@ -1394,11 +1418,11 @@
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "0.22.1",
-    "@anthropic-ai/sdk": "0.98.0",
+    "@anthropic-ai/sdk": "0.100.1",
     "@clack/core": "1.3.1",
     "@clack/prompts": "1.4.0",
-    "@earendil-works/pi-tui": "0.76.0",
-    "@google/genai": "2.6.0",
+    "@earendil-works/pi-tui": "0.78.0",
+    "@google/genai": "2.7.0",
     "@grammyjs/runner": "2.0.3",
     "@grammyjs/transformer-throttler": "1.2.1",
     "@homebridge/ciao": "1.3.9",
@@ -1408,10 +1432,9 @@
     "@mozilla/readability": "0.6.0",
     "@openclaw/fs-safe": "0.3.0",
     "@openclaw/proxyline": "0.3.3",
-    "@silvia-odwyer/photon-node": "0.3.4",
     "chalk": "5.6.2",
     "chokidar": "5.0.0",
-    "clawpdf": "0.2.0",
+    "clawpdf": "0.3.0",
     "commander": "14.0.3",
     "croner": "10.0.1",
     "cross-spawn": "7.0.6",
@@ -1422,28 +1445,26 @@
     "glob": "13.0.6",
     "grammy": "1.43.0",
     "highlight.js": "11.11.1",
-    "hosted-git-info": "9.0.3",
+    "hosted-git-info": "10.1.1",
     "ignore": "7.0.5",
-    "ipaddr.js": "2.4.0",
     "jiti": "2.7.0",
     "json5": "2.2.3",
     "jszip": "3.10.1",
     "kysely": "0.29.2",
     "linkedom": "0.18.12",
-    "markdown-it": "14.2.0",
     "minimatch": "10.2.5",
     "node-edge-tts": "1.2.10",
-    "openai": "6.39.0",
+    "openai": "6.39.1",
     "partial-json": "0.1.7",
     "playwright-core": "1.60.0",
     "proper-lockfile": "4.1.2",
     "qrcode": "1.5.4",
     "quickjs-wasi": "3.0.0",
-    "rastermill": "0.3.0",
+    "rastermill": "0.3.1",
     "tar": "7.5.15",
     "tree-sitter-bash": "0.25.1",
     "tslog": "4.10.2",
-    "typebox": "1.1.38",
+    "typebox": "1.1.39",
     "typescript": "6.0.3",
     "undici": "8.3.0",
     "web-push": "3.6.7",
@@ -1451,23 +1472,23 @@
     "ws": "8.21.0",
     "yaml": "2.9.0",
     "zod": "4.4.3",
-    "@agentclientprotocol/claude-agent-acp": "0.37.0",
+    "@agentclientprotocol/claude-agent-acp": "0.39.0",
     "@zed-industries/codex-acp": "0.15.0",
     "acpx": "0.10.0",
     "@aws/bedrock-token-generator": "1.1.0",
-    "@aws-sdk/client-bedrock": "3.1053.0",
-    "@aws-sdk/client-bedrock-runtime": "3.1053.0",
-    "@aws-sdk/credential-provider-node": "3.972.44",
-    "@smithy/node-http-handler": "4.7.4",
-    "@smithy/shared-ini-file-loader": "4.5.4",
+    "@aws-sdk/client-bedrock": "3.1056.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1056.0",
+    "@aws-sdk/credential-provider-node": "3.972.46",
+    "@smithy/node-http-handler": "4.7.5",
+    "@smithy/shared-ini-file-loader": "4.5.5",
     "@smithy/types": "4.14.2",
     "@anthropic-ai/vertex-sdk": "0.16.1",
     "@a2ui/lit": "0.10.0",
     "@lit/context": "1.1.6",
     "lit": "3.3.3",
-    "openclaw": ">=2026.5.28",
-    "@openai/codex": "0.134.0",
-    "@github/copilot-sdk": "1.0.0-beta.4",
+    "openclaw": ">=2026.6.1",
+    "@openai/codex": "0.135.0",
+    "@github/copilot-sdk": "1.0.0-beta.9",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.218.0",
     "@opentelemetry/exporter-logs-otlp-proto": "0.218.0",
@@ -1479,38 +1500,39 @@
     "@opentelemetry/sdk-node": "0.218.0",
     "@opentelemetry/sdk-trace-base": "2.7.1",
     "@opentelemetry/semantic-conventions": "1.41.1",
-    "@pierre/diffs": "1.2.3",
+    "@pierre/diffs": "1.2.4",
     "@pierre/theme": "1.0.3",
     "@shikijs/langs": "4.1.0",
     "@discordjs/voice": "0.19.2",
     "discord-api-types": "0.38.48",
-    "libopus-wasm": "0.1.0",
+    "libopus-wasm": "0.2.0",
     "@larksuiteoapi/node-sdk": "1.66.0",
     "google-auth-library": "10.6.2",
     "gaxios": "7.1.4",
-    "@line/bot-sdk": "11.0.0",
+    "@line/bot-sdk": "11.0.1",
     "@clawdbot/lobster": "2026.5.22",
-    "@matrix-org/matrix-sdk-crypto-nodejs": "0.4.0",
+    "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.0",
     "@matrix-org/matrix-sdk-crypto-wasm": "18.3.0",
     "fake-indexeddb": "6.2.5",
+    "markdown-it": "14.2.0",
     "matrix-js-sdk": "41.6.0",
     "music-metadata": "11.12.3",
-    "@lancedb/lancedb": "0.29.0",
-    "apache-arrow": "18.1.0",
+    "@lancedb/lancedb": "0.30.0",
+    "apache-arrow": "21.1.0",
     "@azure/identity": "4.13.1",
     "@microsoft/teams.api": "2.0.12",
     "@microsoft/teams.apps": "2.0.12",
     "nostr-tools": "2.23.5",
     "jsonc-parser": "3.3.1",
-    "@copilotkit/aimock": "1.27.1",
+    "@copilotkit/aimock": "1.27.3",
     "@tencent-connect/qqbot-connector": "1.1.0",
     "mpg123-decoder": "1.0.3",
     "silk-wasm": "3.7.1",
-    "@slack/bolt": "4.7.2",
+    "@slack/bolt": "4.7.3",
     "@slack/types": "2.21.1",
     "@slack/web-api": "7.16.0",
-    "@aws-sdk/client-s3": "3.1053.0",
-    "@aws-sdk/s3-request-presigner": "3.1053.0",
+    "@aws-sdk/client-s3": "3.1056.0",
+    "@aws-sdk/s3-request-presigner": "3.1056.0",
     "@tloncorp/tlon-skill": "0.4.0",
     "@urbit/aura": "3.0.0",
     "tokenjuice": "0.8.0",
@@ -1523,7 +1545,7 @@
   },
   "devDependencies": {
     "@a2ui/lit": "0.10.0",
-    "@copilotkit/aimock": "1.27.1",
+    "@copilotkit/aimock": "1.27.3",
     "@grammyjs/types": "3.27.3",
     "@lit-labs/signals": "0.3.0",
     "@lit/context": "1.1.6",
@@ -1549,7 +1571,7 @@
     "oxlint-tsgolint": "0.23.0",
     "shiki": "4.1.0",
     "signal-utils": "0.21.1",
-    "tsdown": "0.22.0",
+    "tsdown": "0.22.1",
     "tsx": "4.22.3",
     "unrun": "0.3.0",
     "vitest": "4.1.7"
