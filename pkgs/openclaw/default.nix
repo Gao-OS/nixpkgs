@@ -65,6 +65,7 @@ buildNpmPackage rec {
 
   nodejs = nodejs_24;
 
+  npmFlags = [ "--legacy-peer-deps" ];
   npmInstallFlags = [ "--ignore-scripts" ];
 
   postInstall = ''

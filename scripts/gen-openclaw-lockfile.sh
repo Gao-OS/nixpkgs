@@ -76,7 +76,9 @@ PYEOF
 
 echo "==> Running npm install --package-lock-only..."
 rm -f npm-shrinkwrap.json
-npm install --package-lock-only --package-lock=true --ignore-scripts 2>&1 | tail -3
+# Match the package build flags. OpenClaw can ship extension dependencies whose
+# peer ranges lag the versions selected by the release package metadata.
+npm install --package-lock-only --package-lock=true --ignore-scripts --legacy-peer-deps
 
 if [ ! -f package-lock.json ]; then
   echo "::error::npm did not generate package-lock.json"
