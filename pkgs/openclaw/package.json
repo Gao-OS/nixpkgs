@@ -1,6 +1,6 @@
 {
   "name": "openclaw",
-  "version": "2026.6.1",
+  "version": "2026.6.5",
   "description": "Multi-channel AI gateway with extensible messaging integrations",
   "keywords": [],
   "homepage": "https://github.com/openclaw/openclaw#readme",
@@ -1213,6 +1213,10 @@
       "types": "./dist/plugin-sdk/plugin-entry.d.ts",
       "default": "./dist/plugin-sdk/plugin-entry.js"
     },
+    "./plugin-sdk/provider-catalog-live-runtime": {
+      "types": "./dist/plugin-sdk/provider-catalog-live-runtime.d.ts",
+      "default": "./dist/plugin-sdk/provider-catalog-live-runtime.js"
+    },
     "./plugin-sdk/provider-catalog-runtime": {
       "types": "./dist/plugin-sdk/provider-catalog-runtime.d.ts",
       "default": "./dist/plugin-sdk/provider-catalog-runtime.js"
@@ -1486,7 +1490,7 @@
     "@a2ui/lit": "0.10.0",
     "@lit/context": "1.1.6",
     "lit": "3.3.3",
-    "openclaw": ">=2026.6.1",
+    "openclaw": ">=2026.6.5",
     "@openai/codex": "0.135.0",
     "@github/copilot-sdk": "1.0.0-beta.9",
     "@opentelemetry/api": "1.9.1",
@@ -1575,14 +1579,6 @@
     "tsx": "4.22.3",
     "unrun": "0.3.0",
     "vitest": "4.1.7"
-  },
-  "overrides": {
-    "axios": "1.16.0",
-    "fast-uri": "3.1.2",
-    "follow-redirects": "1.16.0",
-    "ip-address": "10.2.0",
-    "node-domexception": "npm:@nolyfill/domexception@1.0.28",
-    "uuid": "14.0.0"
   },
   "engines": {
     "node": ">=22.19.0"
