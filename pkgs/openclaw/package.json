@@ -1,6 +1,6 @@
 {
   "name": "openclaw",
-  "version": "2026.6.1",
+  "version": "2026.6.6",
   "description": "Multi-channel AI gateway with extensible messaging integrations",
   "keywords": [],
   "homepage": "https://github.com/openclaw/openclaw#readme",
@@ -91,6 +91,7 @@
     "!dist/extensions/google-meet/**",
     "!dist/extensions/googlechat/**",
     "!dist/extensions/line/**",
+    "!dist/extensions/llama-cpp/**",
     "!dist/extensions/lobster/**",
     "!dist/extensions/memory-lancedb/**",
     "!dist/extensions/matrix/**",
@@ -584,6 +585,10 @@
     "./plugin-sdk/agent-harness": {
       "types": "./dist/plugin-sdk/agent-harness.d.ts",
       "default": "./dist/plugin-sdk/agent-harness.js"
+    },
+    "./plugin-sdk/agent-harness-exec-review-runtime": {
+      "types": "./dist/plugin-sdk/agent-harness-exec-review-runtime.d.ts",
+      "default": "./dist/plugin-sdk/agent-harness-exec-review-runtime.js"
     },
     "./plugin-sdk/agent-harness-runtime": {
       "types": "./dist/plugin-sdk/agent-harness-runtime.d.ts",
@@ -1213,6 +1218,10 @@
       "types": "./dist/plugin-sdk/plugin-entry.d.ts",
       "default": "./dist/plugin-sdk/plugin-entry.js"
     },
+    "./plugin-sdk/provider-catalog-live-runtime": {
+      "types": "./dist/plugin-sdk/provider-catalog-live-runtime.d.ts",
+      "default": "./dist/plugin-sdk/provider-catalog-live-runtime.js"
+    },
     "./plugin-sdk/provider-catalog-runtime": {
       "types": "./dist/plugin-sdk/provider-catalog-runtime.d.ts",
       "default": "./dist/plugin-sdk/provider-catalog-runtime.js"
@@ -1478,16 +1487,16 @@
     "@aws/bedrock-token-generator": "1.1.0",
     "@aws-sdk/client-bedrock": "3.1056.0",
     "@aws-sdk/client-bedrock-runtime": "3.1056.0",
-    "@aws-sdk/credential-provider-node": "3.972.46",
-    "@smithy/node-http-handler": "4.7.5",
+    "@aws-sdk/credential-provider-node": "3.972.52",
+    "@smithy/node-http-handler": "4.7.7",
     "@smithy/shared-ini-file-loader": "4.5.5",
-    "@smithy/types": "4.14.2",
+    "@smithy/types": "4.14.3",
     "@anthropic-ai/vertex-sdk": "0.16.1",
     "@a2ui/lit": "0.10.0",
     "@lit/context": "1.1.6",
     "lit": "3.3.3",
-    "openclaw": ">=2026.6.1",
-    "@openai/codex": "0.135.0",
+    "openclaw": ">=2026.6.6",
+    "@openai/codex": "0.139.0",
     "@github/copilot-sdk": "1.0.0-beta.9",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/api-logs": "0.218.0",
@@ -1510,6 +1519,7 @@
     "google-auth-library": "10.6.2",
     "gaxios": "7.1.4",
     "@line/bot-sdk": "11.0.1",
+    "node-llama-cpp": "3.18.1",
     "@clawdbot/lobster": "2026.5.22",
     "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.0",
     "@matrix-org/matrix-sdk-crypto-wasm": "18.3.0",
@@ -1575,14 +1585,6 @@
     "tsx": "4.22.3",
     "unrun": "0.3.0",
     "vitest": "4.1.7"
-  },
-  "overrides": {
-    "axios": "1.16.0",
-    "fast-uri": "3.1.2",
-    "follow-redirects": "1.16.0",
-    "ip-address": "10.2.0",
-    "node-domexception": "npm:@nolyfill/domexception@1.0.28",
-    "uuid": "14.0.0"
   },
   "engines": {
     "node": ">=22.19.0"
