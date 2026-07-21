@@ -127,6 +127,7 @@ in {
       description = "OpenClaw AI Gateway";
       after = ["network.target" "systemd-tmpfiles-setup.service"];
       wantedBy = ["multi-user.target"];
+      path = [pkgs.nodejs_24];
 
       environment =
         {
