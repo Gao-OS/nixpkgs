@@ -135,6 +135,8 @@ for pkg_json in sorted(glob.glob("extensions/*/package.json")):
         ext = json.load(f)
     for key in ("dependencies", "peerDependencies"):
         for name, ver in ext.get(key, {}).items():
+            if name == "openclaw" or name == root.get("name"):
+                continue
             if isinstance(ver, str) and ver.startswith("workspace:"):
                 published_version = all_deps.get(name)
                 if (
