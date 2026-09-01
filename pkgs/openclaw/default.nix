@@ -53,10 +53,11 @@ buildNpmPackage rec {
   '';
 
   # preConfigure runs only in the main derivation (not in fetchNpmDeps).
-  # Strip lifecycle scripts that try to invoke pnpm, which is not available
-  # in the Nix sandbox. The npm tarball already ships pre-built dist/.
+  # Strip lifecycle scripts that try to invoke pnpm or enforce version gates
+  # that are not applicable in the Nix sandbox. The npm tarball already ships
+  # pre-built dist/.
   preConfigure = ''
-    jq 'del(.scripts.prepack, .scripts.prepare, .scripts.postinstall, .scripts.build)' \
+    jq 'del(.scripts.preinstall, .scripts.prepack, .scripts.prepare, .scripts.postinstall, .scripts.build)' \
       package.json > package.json.tmp && mv package.json.tmp package.json
 
     # The bundled Node.js SQLite is usable here despite OpenClaw's version gate.
@@ -71,8 +72,7 @@ buildNpmPackage rec {
 
   nodejs = nodejs_24;
 
-  npmFlags = [ "--legacy-peer-deps" ];
-  npmInstallFlags = [ "--ignore-scripts" ];
+  npmFlags = [ "--legacy-peer-deps" "--ignore-scripts" ];
 
   postInstall = ''
     # Wrap the entry point with the correct node version
