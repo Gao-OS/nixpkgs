@@ -61,10 +61,12 @@ buildNpmPackage rec {
       package.json > package.json.tmp && mv package.json.tmp package.json
 
     # The bundled Node.js SQLite is usable here despite OpenClaw's version gate.
-    substituteInPlace dist/openclaw-state-db-*.js \
-      --replace-fail \
-        'if (isSqliteWalResetSafeVersion(version)) return;' \
-        'return;'
+    for file in $(grep -rl 'if (isSqliteWalResetSafeVersion(version)) return;' dist/ || true); do
+      substituteInPlace "$file" \
+        --replace-fail \
+          'if (isSqliteWalResetSafeVersion(version)) return;' \
+          'return;'
+    done
   '';
 
   # The npm tarball already contains pre-built dist/, no build needed
