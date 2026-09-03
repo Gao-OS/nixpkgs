@@ -81,9 +81,23 @@ buildNpmPackage rec {
     makeWrapper ${nodejs_24}/bin/node "$out/bin/openclaw" \
       --add-flags "$out/lib/node_modules/openclaw/openclaw.mjs"
 
+    # The pre-built npm tarball ships a `.openclaw-lifecycle-pending`
+    # marker; on first invocation the runtime tries
+    # `mkdir .openclaw-lifecycle-lock` inside the package directory and
+    # crashes against the read-only Nix store. Run the upstream
+    # postinstall (which calls `completePackageLifecycle()` and clears
+    # the marker) so the gateway starts in a clean state. Preinstall
+    # remains skipped because its `enforceSupportedNodeRuntime` rejects
+    # Node <24.15.0; the bundled postinstall has no version gate.
+    lib="$out/lib/node_modules/openclaw"
+    ${nodejs_24}/bin/node "$lib/scripts/postinstall-bundled-plugins.mjs" \
+      || echo "openclaw postinstall script failed; relying on marker cleanup only"
+    # Defense-in-depth: even if the upstream script changes shape in the
+    # future, ensure the marker never ships in the Nix output.
+    rm -f "$lib/.openclaw-lifecycle-pending"
+
     # Expose bundled extension node_modules in the main node_modules so that
     # shared dist chunks can find them via normal Node.js resolution.
-    lib="$out/lib/node_modules/openclaw"
     for ext_nm in "$lib/dist/extensions/"*/node_modules; do
       [ -d "$ext_nm" ] || continue
       for entry in "$ext_nm/"*; do
