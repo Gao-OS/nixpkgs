@@ -67,6 +67,36 @@ buildNpmPackage rec {
           'if (isSqliteWalResetSafeVersion(version)) return;' \
           'return;'
     done
+
+    # PATCHED for openclaw@2026.8.2 - see Gao-OS/nixpkgs#34 and upstream
+    # openclaw/openclaw#135713 (commit 8c5442c01bb0a529c001b5082d051f61e8e6682d). 2026.8.2 still
+    # treats advisory startup migration warnings as fatal, which crash-loops the gateway on a
+    # multi-agent install with agents.ownership="explicit" (e.g. a stale Codex plugin warning),
+    # and refuses startup even though required state is recoverable. Commenting out the
+    # warning-only gate matches the severity policy that landed on upstream main via #135713;
+    # the blocker-only fatal path and the pluginConvergence blocking-diagnostic check below
+    # remain unchanged. Remove this patch once an upstream release ships that contains
+    # 8c5442c0... (i.e. openclaw@>=2026.9.1 stable). substituteInPlace --replace-fail will fail
+    # the build if the upstream bundle ever renames the chunk, which is the signal to revisit
+    # this patch.
+    substituteInPlace dist/doctor-config-preflight-B-Zv4Qey.js \
+      --replace-fail \
+          '		if (params.startupMigrationWarnings.length > 0) throwStartupMigrationRefusal(formatStartupMigrationFailure({
+			warnings: [...params.startupMigrationWarnings],
+			blockers: []
+		}));
+' \
+          '		// PATCHED for openclaw@2026.8.2 in pkgs/openclaw/default.nix - see Gao-OS/nixpkgs#34 and
+		// upstream openclaw/openclaw#135713 (commit 8c5442c01bb0a529c001b5082d051f61e8e6682d).
+		// Advisory startup-migration findings now log via the doctor path instead of refusing
+		// gateway startup; required-state blockers (the next throwStartupMigrationRefusal in
+		// this block, plus the pluginConvergence.blockingDiagnostic check below) still refuse.
+		// Remove this patch once an upstream release ships that contains 8c5442c0...
+		// if (params.startupMigrationWarnings.length > 0) throwStartupMigrationRefusal(formatStartupMigrationFailure({
+		// 	warnings: [...params.startupMigrationWarnings],
+		// 	blockers: []
+		// }));
+'
   '';
 
   # The npm tarball already contains pre-built dist/, no build needed
