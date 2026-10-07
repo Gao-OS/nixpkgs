@@ -129,6 +129,10 @@ if root.get("version") != version:
 all_deps = dict(root.get("dependencies", {}))
 added = []
 skipped = []
+# Workboard's published JS inlines these workspace modules; its manifest still
+# retains the source workspace:* declarations. They need no npm installation.
+# Keep this list explicit so an unknown workspace dependency still fails.
+bundled_workspace_deps = {"@openclaw/gateway-protocol", "@openclaw/workboard-contract"}
 
 for pkg_json in sorted(glob.glob("extensions/*/package.json")):
     with open(pkg_json) as f:
@@ -147,6 +151,9 @@ for pkg_json in sorted(glob.glob("extensions/*/package.json")):
                         f"  = {name}@{published_version} replaces {ver}  "
                         f"(from {pkg_json})"
                     )
+                    continue
+                if name in bundled_workspace_deps:
+                    skipped.append(f"  = {name} bundled in published JS  (from {pkg_json})")
                     continue
                 sys.exit(
                     f"Unresolved workspace dependency {name}@{ver} "
