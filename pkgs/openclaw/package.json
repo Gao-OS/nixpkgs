@@ -1,10 +1,11 @@
 {
   "name": "openclaw",
-  "version": "2026.8.2",
+  "version": "2026.9.8",
   "openclaw": {
+    "updateAdmissionProtocol": 1,
     "schemaVersions": {
-      "state": 15,
-      "agent": 19
+      "state": 19,
+      "agent": 24
     }
   },
   "description": "Multi-channel AI gateway with extensible messaging integrations",
@@ -22,6 +23,15 @@
   "bin": {
     "openclaw": "openclaw.mjs"
   },
+  "publishConfig": {
+    "executableFiles": [
+      "dist/crabbox-wrapper.js",
+      "dist/entry.js",
+      "dist/index.js",
+      "dist/mac-node-worker.js",
+      "dist/native-hook-relay/entry.js"
+    ]
+  },
   "directories": {
     "doc": "docs",
     "test": "test"
@@ -29,7 +39,15 @@
   "files": [
     "CHANGELOG.md",
     "LICENSE",
+    "cli-root-options.mjs",
+    "gateway-run-argv.mjs",
+    "gateway-shutdown-budget.mjs",
+    "node-sqlite.mjs",
     "node-version.mjs",
+    "node-runtime-update.mjs",
+    "node-runtime-recovery.mjs",
+    "node-host-launcher.mjs",
+    "node-compile-cache.mjs",
     "openclaw.mjs",
     "pnpm-workspace.yaml",
     "README.md",
@@ -49,7 +67,7 @@
     "!dist/plugin-sdk/acp-runtime-backend.d.ts",
     "!dist/plugin-sdk/agent-core.d.ts",
     "!dist/plugin-sdk/agent-harness-exec-review-runtime.d.ts",
-    "!dist/plugin-sdk/agent-harness-task-runtime.d.ts",
+    "!dist/plugin-sdk/agent-harness-completion.d.ts",
     "!dist/plugin-sdk/agent-harness-tool-runtime.d.ts",
     "!dist/plugin-sdk/agent-runtime-test-contracts.js",
     "!dist/plugin-sdk/agent-runtime-test-contracts.d.ts",
@@ -288,8 +306,9 @@
     "!dist/extensions/discord/**",
     "!dist/extensions/duckduckgo/**",
     "!dist/extensions/exa/**",
-    "!dist/extensions/feishu/**",
+    "!dist/extensions/facetime/**",
     "!dist/extensions/featherless/**",
+    "!dist/extensions/feishu/**",
     "!dist/extensions/firecrawl/**",
     "!dist/extensions/fireworks/**",
     "!dist/extensions/fish-audio-speech/**",
@@ -318,11 +337,13 @@
     "!dist/extensions/nextcloud-talk/**",
     "!dist/extensions/nostr/**",
     "!dist/extensions/novita/**",
+    "!dist/extensions/onnx/**",
     "!dist/extensions/opencode/**",
     "!dist/extensions/parallel/**",
     "!dist/extensions/perplexity/**",
     "!dist/extensions/qianfan/**",
     "!dist/extensions/raft/**",
+    "!dist/extensions/radius/**",
     "!dist/extensions/pixverse/**",
     "!dist/extensions/qa-channel/**",
     "!dist/extensions/qa-lab/**",
@@ -331,16 +352,19 @@
     "!dist/extensions/searxng/**",
     "!dist/extensions/signal/**",
     "!dist/extensions/slack/**",
+    "!dist/extensions/slack-huddles/**",
     "!dist/extensions/sms/**",
     "!dist/extensions/stepfun/**",
     "!dist/extensions/synthetic/**",
     "!dist/extensions/synology-chat/**",
     "!dist/extensions/tavily/**",
+    "!dist/extensions/team-reports/**",
     "!dist/extensions/teams-meetings/**",
     "!dist/extensions/tencent/**",
     "!dist/extensions/tokenjuice/**",
     "!dist/extensions/tlon/**",
     "!dist/extensions/twitch/**",
+    "!dist/extensions/typesafe/**",
     "!dist/extensions/venice/**",
     "!dist/extensions/vercel-ai-gateway/**",
     "!dist/extensions/visitor-access/**",
@@ -365,7 +389,7 @@
     "!dist/plugin-sdk/src/plugin-sdk/qa-channel-protocol.d.ts",
     "!dist/plugin-sdk/src/plugin-sdk/qa-lab.d.ts",
     "!dist/plugin-sdk/src/plugin-sdk/qa-runtime.d.ts",
-    "!dist/qa-runtime-*.js",
+    "!dist/qa-runtime-*",
     "docs/",
     "!docs/.generated/**",
     "!docs/.i18n/**",
@@ -381,18 +405,45 @@
     "patches/",
     "skills/",
     "custodian-skills/",
+    "scripts/check-install-dependency-ownership.mjs",
+    "scripts/freebsd-service-inspect.mjs",
+    "scripts/lib/freebsd-service-discovery.d.mts",
+    "scripts/lib/freebsd-service-discovery.mjs",
+    "scripts/lib/fs-safe-prebuild.mjs",
+    "scripts/lib/javascript-statements.mjs",
+    "scripts/install-cli.sh",
+    "scripts/install.ps1",
     "scripts/prepare-git-hooks.mjs",
     "scripts/preinstall-package-manager-warning.mjs",
     "scripts/lib/official-external-channel-catalog.json",
     "scripts/lib/official-external-plugin-catalog.json",
     "scripts/lib/official-external-provider-catalog.json",
-    "scripts/lib/guard-inventory-utils.mjs",
     "scripts/lib/package-dist-imports.mjs",
     "scripts/lib/package-lifecycle-marker.mjs",
     "scripts/lib/recommended-tool-installs.json",
     "scripts/postinstall-bundled-plugins.mjs",
     "scripts/windows-cmd-helpers.mjs",
-    "!dist/plugin-sdk/model-catalog-pricing.d.ts"
+    "!dist/plugin-sdk/model-catalog-pricing.d.ts",
+    "!dist/plugin-sdk/blob-runtime.d.ts",
+    "!dist/plugin-sdk/realtime-transcription-session.d.ts",
+    "!dist/plugin-sdk/speech-provider.d.ts",
+    "!dist/plugin-sdk/realtime-voice-provider.d.ts",
+    "!dist/plugin-sdk/provider-thinking-runtime.d.ts",
+    "!dist/plugin-sdk/embedding-provider-adapter.d.ts",
+    "!dist/plugin-sdk/agent-harness-registration.d.ts",
+    "!dist/plugin-sdk/session-catalog-paging.d.ts",
+    "!dist/plugin-sdk/provider-auth-aliases.d.ts",
+    "!dist/plugin-sdk/provider-model-metadata.d.ts",
+    "!dist/plugin-sdk/memory-core-host-engine-knn.d.ts",
+    "!dist/plugin-sdk/memory-core-host-engine-indexing.d.ts",
+    "!dist/plugin-sdk/sqlite-worker-runtime.d.ts",
+    "!dist/plugin-sdk/worker-task-server.d.ts",
+    "!dist/plugin-sdk/media-ffmpeg.d.ts",
+    "!dist/plugin-sdk/realtime-voice-playback.d.ts",
+    "!dist/plugin-sdk/text-grapheme.d.ts",
+    "!dist/plugin-sdk/agent-harness-session-runtime.d.ts",
+    "!dist/plugin-sdk/agent-harness-attempt-runtime.d.ts",
+    "!dist/plugin-sdk/secret-egress-runtime.d.ts"
   ],
   "type": "module",
   "main": "dist/index.js",
@@ -401,6 +452,14 @@
     "./plugin-sdk/core": {
       "types": "./dist/plugin-sdk/core.d.ts",
       "default": "./dist/plugin-sdk/core.js"
+    },
+    "./plugin-sdk/code-mode-executor-runtime": {
+      "types": "./dist/plugin-sdk/code-mode-executor-runtime.d.ts",
+      "default": "./dist/plugin-sdk/code-mode-executor-runtime.js"
+    },
+    "./plugin-sdk/control-ui-link-reader": {
+      "types": "./dist/plugin-sdk/control-ui-link-reader.d.ts",
+      "default": "./dist/plugin-sdk/control-ui-link-reader.js"
     },
     "./plugin-sdk/provider-setup": {
       "default": "./dist/plugin-sdk/provider-setup.js"
@@ -478,6 +537,9 @@
     "./plugin-sdk/archive": {
       "types": "./dist/plugin-sdk/archive.d.ts",
       "default": "./dist/plugin-sdk/archive.js"
+    },
+    "./plugin-sdk/blob-runtime": {
+      "default": "./dist/plugin-sdk/blob-runtime.js"
     },
     "./plugin-sdk/root-walk": {
       "types": "./dist/plugin-sdk/root-walk.d.ts",
@@ -706,8 +768,18 @@
       "types": "./dist/plugin-sdk/media-mime.d.ts",
       "default": "./dist/plugin-sdk/media-mime.js"
     },
+    "./plugin-sdk/media-ffmpeg": {
+      "default": "./dist/plugin-sdk/media-ffmpeg.js"
+    },
     "./plugin-sdk/embedding-providers": {
       "default": "./dist/plugin-sdk/embedding-providers.js"
+    },
+    "./plugin-sdk/embedding-provider-runtime-contract": {
+      "types": "./dist/plugin-sdk/embedding-provider-runtime-contract.d.ts",
+      "default": "./dist/plugin-sdk/embedding-provider-runtime-contract.js"
+    },
+    "./plugin-sdk/embedding-provider-adapter": {
+      "default": "./dist/plugin-sdk/embedding-provider-adapter.js"
     },
     "./plugin-sdk/media-generation-runtime": {
       "default": "./dist/plugin-sdk/media-generation-runtime.js"
@@ -747,6 +819,9 @@
     "./plugin-sdk/speech-core": {
       "default": "./dist/plugin-sdk/speech-core.js"
     },
+    "./plugin-sdk/speech-provider": {
+      "default": "./dist/plugin-sdk/speech-provider.js"
+    },
     "./plugin-sdk/speech-settings": {
       "types": "./dist/plugin-sdk/speech-settings.d.ts",
       "default": "./dist/plugin-sdk/speech-settings.js"
@@ -776,6 +851,9 @@
       "types": "./dist/plugin-sdk/secret-ref-runtime.d.ts",
       "default": "./dist/plugin-sdk/secret-ref-runtime.js"
     },
+    "./plugin-sdk/secret-egress-runtime": {
+      "default": "./dist/plugin-sdk/secret-egress-runtime.js"
+    },
     "./plugin-sdk/secret-file-runtime": {
       "default": "./dist/plugin-sdk/secret-file-runtime.js"
     },
@@ -794,12 +872,20 @@
       "types": "./dist/plugin-sdk/gateway-runtime.d.ts",
       "default": "./dist/plugin-sdk/gateway-runtime.js"
     },
+    "./plugin-sdk/websocket-runtime": {
+      "types": "./dist/plugin-sdk/websocket-runtime.d.ts",
+      "default": "./dist/plugin-sdk/websocket-runtime.js"
+    },
     "./plugin-sdk/cli-argv": {
       "types": "./dist/plugin-sdk/cli-argv.d.ts",
       "default": "./dist/plugin-sdk/cli-argv.js"
     },
     "./plugin-sdk/cli-runtime": {
       "default": "./dist/plugin-sdk/cli-runtime.js"
+    },
+    "./plugin-sdk/node-cli-runtime": {
+      "types": "./dist/plugin-sdk/node-cli-runtime.d.ts",
+      "default": "./dist/plugin-sdk/node-cli-runtime.js"
     },
     "./plugin-sdk/cli-backend": {
       "default": "./dist/plugin-sdk/cli-backend.js"
@@ -816,19 +902,32 @@
     "./plugin-sdk/codex-session-transcript-runtime": {
       "default": "./dist/plugin-sdk/codex-session-transcript-runtime.js"
     },
-    "./plugin-sdk/agent-harness-task-runtime": {
-      "default": "./dist/plugin-sdk/agent-harness-task-runtime.js"
+    "./plugin-sdk/agent-harness-completion": {
+      "default": "./dist/plugin-sdk/agent-harness-completion.js"
     },
     "./plugin-sdk/agent-harness": {
       "types": "./dist/plugin-sdk/agent-harness.d.ts",
       "default": "./dist/plugin-sdk/agent-harness.js"
     },
+    "./plugin-sdk/agent-harness-attempt-runtime": {
+      "default": "./dist/plugin-sdk/agent-harness-attempt-runtime.js"
+    },
     "./plugin-sdk/agent-harness-exec-review-runtime": {
       "default": "./dist/plugin-sdk/agent-harness-exec-review-runtime.js"
+    },
+    "./plugin-sdk/agent-harness-registration": {
+      "default": "./dist/plugin-sdk/agent-harness-registration.js"
     },
     "./plugin-sdk/agent-harness-runtime": {
       "types": "./dist/plugin-sdk/agent-harness-runtime.d.ts",
       "default": "./dist/plugin-sdk/agent-harness-runtime.js"
+    },
+    "./plugin-sdk/agent-workspace-runtime": {
+      "types": "./dist/plugin-sdk/agent-workspace-runtime.d.ts",
+      "default": "./dist/plugin-sdk/agent-workspace-runtime.js"
+    },
+    "./plugin-sdk/agent-harness-session-runtime": {
+      "default": "./dist/plugin-sdk/agent-harness-session-runtime.js"
     },
     "./plugin-sdk/agent-harness-tool-runtime": {
       "default": "./dist/plugin-sdk/agent-harness-tool-runtime.js"
@@ -848,6 +947,9 @@
     },
     "./plugin-sdk/process-runtime": {
       "default": "./dist/plugin-sdk/process-runtime.js"
+    },
+    "./plugin-sdk/worker-task-server": {
+      "default": "./dist/plugin-sdk/worker-task-server.js"
     },
     "./plugin-sdk/windows-spawn": {
       "default": "./dist/plugin-sdk/windows-spawn.js"
@@ -1120,6 +1222,9 @@
       "types": "./dist/plugin-sdk/session-catalog.d.ts",
       "default": "./dist/plugin-sdk/session-catalog.js"
     },
+    "./plugin-sdk/session-catalog-paging": {
+      "default": "./dist/plugin-sdk/session-catalog-paging.js"
+    },
     "./plugin-sdk/session-catalog-runtime": {
       "default": "./dist/plugin-sdk/session-catalog-runtime.js"
     },
@@ -1139,6 +1244,9 @@
     },
     "./plugin-sdk/sqlite-runtime": {
       "default": "./dist/plugin-sdk/sqlite-runtime.js"
+    },
+    "./plugin-sdk/sqlite-worker-runtime": {
+      "default": "./dist/plugin-sdk/sqlite-worker-runtime.js"
     },
     "./plugin-sdk/session-transcript-hit": {
       "default": "./dist/plugin-sdk/session-transcript-hit.js"
@@ -1191,6 +1299,9 @@
     "./plugin-sdk/realtime-transcription": {
       "default": "./dist/plugin-sdk/realtime-transcription.js"
     },
+    "./plugin-sdk/realtime-transcription-session": {
+      "default": "./dist/plugin-sdk/realtime-transcription-session.js"
+    },
     "./plugin-sdk/realtime-bootstrap-context": {
       "default": "./dist/plugin-sdk/realtime-bootstrap-context.js"
     },
@@ -1202,6 +1313,12 @@
     },
     "./plugin-sdk/realtime-voice": {
       "default": "./dist/plugin-sdk/realtime-voice.js"
+    },
+    "./plugin-sdk/realtime-voice-playback": {
+      "default": "./dist/plugin-sdk/realtime-voice-playback.js"
+    },
+    "./plugin-sdk/realtime-voice-provider": {
+      "default": "./dist/plugin-sdk/realtime-voice-provider.js"
     },
     "./plugin-sdk/meeting-page-script-runtime": {
       "default": "./dist/plugin-sdk/meeting-page-script-runtime.js"
@@ -1258,6 +1375,12 @@
     "./plugin-sdk/memory-core-host-engine-foundation": {
       "types": "./dist/plugin-sdk/memory-core-host-engine-foundation.d.ts",
       "default": "./dist/plugin-sdk/memory-core-host-engine-foundation.js"
+    },
+    "./plugin-sdk/memory-core-host-engine-indexing": {
+      "default": "./dist/plugin-sdk/memory-core-host-engine-indexing.js"
+    },
+    "./plugin-sdk/memory-core-host-engine-knn": {
+      "default": "./dist/plugin-sdk/memory-core-host-engine-knn.js"
     },
     "./plugin-sdk/memory-core-host-engine-fs": {
       "default": "./dist/plugin-sdk/memory-core-host-engine-fs.js"
@@ -1322,6 +1445,9 @@
       "types": "./dist/plugin-sdk/provider-auth.d.ts",
       "default": "./dist/plugin-sdk/provider-auth.js"
     },
+    "./plugin-sdk/provider-auth-aliases": {
+      "default": "./dist/plugin-sdk/provider-auth-aliases.js"
+    },
     "./plugin-sdk/provider-oauth-runtime": {
       "default": "./dist/plugin-sdk/provider-oauth-runtime.js"
     },
@@ -1370,6 +1496,9 @@
     "./plugin-sdk/provider-model-types": {
       "default": "./dist/plugin-sdk/provider-model-types.js"
     },
+    "./plugin-sdk/provider-model-metadata": {
+      "default": "./dist/plugin-sdk/provider-model-metadata.js"
+    },
     "./plugin-sdk/provider-model-shared": {
       "default": "./dist/plugin-sdk/provider-model-shared.js"
     },
@@ -1381,6 +1510,9 @@
     },
     "./plugin-sdk/provider-stream-shared": {
       "default": "./dist/plugin-sdk/provider-stream-shared.js"
+    },
+    "./plugin-sdk/provider-thinking-runtime": {
+      "default": "./dist/plugin-sdk/provider-thinking-runtime.js"
     },
     "./plugin-sdk/provider-transport-runtime": {
       "default": "./dist/plugin-sdk/provider-transport-runtime.js"
@@ -1434,6 +1566,10 @@
       "types": "./dist/plugin-sdk/secret-input-runtime.d.ts",
       "default": "./dist/plugin-sdk/secret-input-runtime.js"
     },
+    "./plugin-sdk/decisions": {
+      "types": "./dist/plugin-sdk/decisions.d.ts",
+      "default": "./dist/plugin-sdk/decisions.js"
+    },
     "./plugin-sdk/secret-ref-readonly": {
       "types": "./dist/plugin-sdk/secret-ref-readonly.d.ts",
       "default": "./dist/plugin-sdk/secret-ref-readonly.js"
@@ -1466,12 +1602,27 @@
     "./plugin-sdk/text-autolink-runtime": {
       "default": "./dist/plugin-sdk/text-autolink-runtime.js"
     },
+    "./plugin-sdk/text-grapheme": {
+      "default": "./dist/plugin-sdk/text-grapheme.js"
+    },
     "./plugin-sdk/text-utility-runtime": {
       "default": "./dist/plugin-sdk/text-utility-runtime.js"
     },
     "./plugin-sdk/widget-html": {
       "types": "./dist/plugin-sdk/widget-html.d.ts",
       "default": "./dist/plugin-sdk/widget-html.js"
+    },
+    "./plugin-sdk/control-ui": {
+      "types": "./dist/plugin-sdk/control-ui.d.ts",
+      "default": "./dist/plugin-sdk/control-ui.js"
+    },
+    "./plugin-sdk/feature-contract": {
+      "types": "./dist/plugin-sdk/feature-contract.d.ts",
+      "default": "./dist/plugin-sdk/feature-contract.js"
+    },
+    "./plugin-sdk/feature-plugin": {
+      "types": "./dist/plugin-sdk/feature-plugin.d.ts",
+      "default": "./dist/plugin-sdk/feature-plugin.js"
     },
     "./plugin-sdk/tool-plugin": {
       "types": "./dist/plugin-sdk/tool-plugin.d.ts",
@@ -1514,214 +1665,234 @@
     },
     "./cli-entry": "./openclaw.mjs"
   },
+  "bundleDependencies": [
+    "@openclaw/proxyline",
+    "chrome-devtools-mcp",
+    "undici"
+  ],
   "dependencies": {
     "@agentclientprotocol/sdk": "1.4.0",
-    "@anthropic-ai/claude-agent-sdk": "0.3.241",
-    "@anthropic-ai/sdk": "0.120.0",
-    "@clack/core": "1.4.3",
-    "@clack/prompts": "1.7.0",
-    "@earendil-works/pi-tui": "0.84.2",
-    "@google/genai": "2.18.0",
-    "@grammyjs/runner": "2.0.3",
+    "@anthropic-ai/sdk": "0.127.0",
+    "@babel/generator": "8.0.6",
+    "@babel/parser": "8.0.6",
+    "@babel/traverse": "8.0.6",
+    "@clack/core": "1.5.1",
+    "@clack/prompts": "1.8.1",
+    "@earendil-works/pi-tui": "0.86.1",
+    "@google/genai": "2.23.0",
     "@grammyjs/transformer-throttler": "1.2.1",
     "@homebridge/ciao": "1.3.12",
     "@lydell/node-pty": "1.2.0-beta.15",
-    "@mistralai/mistralai": "2.6.4",
+    "@mistralai/mistralai": "2.7.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "@mozilla/readability": "0.6.0",
-    "@openclaw/ai": "2026.8.2",
-    "@openclaw/fs-safe": "0.5.6",
-    "@openclaw/proxyline": "0.3.7",
+    "@openclaw/ai": "2026.9.8",
+    "@openclaw/fs-safe": "0.21.1",
+    "@openclaw/proxyline": "0.3.12",
     "@silvia-odwyer/photon-node": "0.3.4",
-    "@trycua/cua-driver": "0.21.0",
+    "@trycua/cua-driver": "0.28.2",
     "acorn": "8.18.0",
     "chalk": "6.0.0",
     "chokidar": "5.0.0",
-    "clawpdf": "0.3.1",
+    "chrome-devtools-mcp": "1.9.0",
+    "clawpdf": "0.3.2",
     "commander": "15.0.0",
     "croner": "10.0.1",
     "diff": "9.0.0",
-    "dotenv": "17.4.2",
-    "entities": "8.0.0",
+    "dotenv": "18.0.1",
+    "entities": "8.1.0",
+    "esbuild": "0.28.2",
     "execa": "10.0.1",
     "express": "5.2.1",
-    "file-type": "22.0.2",
+    "file-type": "22.1.1",
     "grammy": "1.46.0",
     "highlight.js": "11.12.0",
     "hosted-git-info": "10.1.1",
     "iconv-lite": "0.7.3",
-    "ignore": "7.0.6",
+    "ignore": "7.0.9",
+    "import-meta-resolve": "4.2.0",
     "jiti": "2.7.0",
     "json5": "2.2.3",
-    "jszip": "3.10.1",
-    "koffi": "3.1.6",
-    "kysely": "0.29.5",
+    "jszip": "3.10.2",
+    "koffi": "3.3.1",
+    "kysely": "0.29.6",
     "linkedom": "0.18.13",
     "minimatch": "10.2.6",
-    "ms": "2.1.3",
     "node-edge-tts": "1.2.10",
-    "openai": "7.5.0",
-    "p-limit": "7.3.1",
-    "p-map": "7.0.6",
+    "npm": "11.20.0",
+    "openai": "7.20.0",
+    "p-limit": "7.3.3",
+    "p-map": "7.0.8",
     "partial-json": "0.1.7",
-    "playwright-core": "1.62.1",
-    "pretty-ms": "9.3.0",
+    "playwright-core": "1.63.0",
     "qrcode": "1.5.4",
-    "quickjs-wasi": "3.5.0",
-    "rastermill": "0.3.2",
+    "rastermill": "0.3.3",
     "semver": "7.8.5",
     "tar": "7.5.22",
-    "tree-sitter-bash": "0.25.1",
-    "tslog": "4.11.0",
-    "typebox": "1.3.17",
-    "typescript": "6.0.3",
-    "undici": "8.10.0",
+    "tslog": "5.2.0",
+    "typebox": "1.3.34",
+    "undici": "8.10.2",
     "web-push": "3.6.7",
-    "web-tree-sitter": "0.26.13",
+    "web-tree-sitter": "0.27.0",
     "ws": "8.21.3",
-    "yaml": "2.9.0",
-    "zod": "4.4.3",
-    "@agentclientprotocol/claude-agent-acp": "0.70.0",
-    "@agentclientprotocol/codex-acp": "1.6.2",
-    "acpx": "0.13.1",
+    "yaml": "2.9.1",
+    "zod": "4.6.5",
+    "@agentclientprotocol/claude-agent-acp": "0.79.0",
+    "@agentclientprotocol/codex-acp": "1.12.0",
+    "acpx": "0.19.1",
     "smol-toml": "1.8.0",
     "@aws/bedrock-token-generator": "1.1.0",
-    "@aws-sdk/client-bedrock": "3.1116.0",
-    "@aws-sdk/client-bedrock-runtime": "3.1116.0",
-    "@aws-sdk/credential-provider-node": "3.972.81",
-    "@smithy/node-http-handler": "4.11.3",
+    "@aws-sdk/client-bedrock": "3.1136.0",
+    "@aws-sdk/client-bedrock-runtime": "3.1136.0",
+    "@aws-sdk/credential-provider-node": "3.972.83",
+    "@smithy/node-http-handler": "4.12.1",
     "@smithy/shared-ini-file-loader": "4.7.2",
-    "@smithy/types": "4.17.2",
-    "@anthropic-ai/vertex-sdk": "0.19.5",
-    "google-auth-library": "10.9.1",
-    "nostr-tools": "2.24.3",
-    "@a2ui/lit": "0.10.3",
-    "@a2ui/web_core": "0.10.6",
+    "@smithy/types": "4.18.0",
+    "@anthropic-ai/vertex-sdk": "0.19.10",
+    "google-auth-library": "11.1.0",
+    "yargs-parser": "22.0.0",
+    "nostr-tools": "2.25.2",
+    "@a2ui/lit": "0.11.0",
+    "@a2ui/web_core": "0.11.0",
     "@lit/context": "1.1.6",
     "lit": "3.3.3",
-    "@openai/codex": "0.151.0",
-    "@github/copilot-sdk": "1.0.11",
+    "quickjs-wasi": "3.6.2",
+    "@openai/codex": "0.158.0",
+    "@github/copilot-sdk": "1.0.14",
     "@opentelemetry/api": "1.9.1",
-    "@opentelemetry/api-logs": "0.221.0",
-    "@opentelemetry/context-async-hooks": "2.10.0",
-    "@opentelemetry/core": "2.10.0",
-    "@opentelemetry/exporter-logs-otlp-proto": "0.221.0",
-    "@opentelemetry/exporter-metrics-otlp-proto": "0.221.0",
-    "@opentelemetry/exporter-trace-otlp-proto": "0.221.0",
-    "@opentelemetry/propagator-b3": "2.10.0",
-    "@opentelemetry/propagator-jaeger": "2.10.0",
-    "@opentelemetry/resources": "2.10.0",
-    "@opentelemetry/sdk-logs": "0.221.0",
-    "@opentelemetry/sdk-metrics": "2.10.0",
-    "@opentelemetry/sdk-trace-base": "2.10.0",
+    "@opentelemetry/api-logs": "0.222.0",
+    "@opentelemetry/context-async-hooks": "2.11.0",
+    "@opentelemetry/core": "2.11.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "0.222.0",
+    "@opentelemetry/exporter-metrics-otlp-proto": "0.222.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "0.222.0",
+    "@opentelemetry/propagator-b3": "2.11.0",
+    "@opentelemetry/propagator-jaeger": "2.11.0",
+    "@opentelemetry/resources": "2.11.0",
+    "@opentelemetry/sdk-logs": "0.222.0",
+    "@opentelemetry/sdk-metrics": "2.11.0",
+    "@opentelemetry/sdk-trace-base": "2.11.0",
     "@opentelemetry/semantic-conventions": "1.43.0",
-    "@pierre/diffs": "1.3.5",
+    "@pierre/diffs": "1.4.3",
     "@shikijs/langs": "4.4.3",
     "@discord/embedded-app-sdk": "2.5.0",
     "@discordjs/voice": "0.19.2",
-    "discord-api-types": "0.38.53",
-    "libopus-wasm": "0.2.0",
+    "discord-api-types": "0.38.55",
+    "libopus-wasm": "0.4.0",
     "mdast-util-from-markdown": "2.0.3",
-    "@larksuiteoapi/node-sdk": "1.73.0",
+    "@larksuiteoapi/node-sdk": "1.74.0",
     "mdast-util-gfm-table": "2.0.0",
-    "micromark-extension-gfm-table": "2.1.1",
+    "micromark-extension-gfm-table": "2.1.2",
     "maxmind": "5.0.7",
-    "imapflow": "1.7.2",
-    "mailauth": "5.0.2",
-    "mailparser": "3.9.15",
+    "imapflow": "2.0.5",
+    "mailauth": "5.0.3",
+    "mailparser": "3.9.28",
     "@line/bot-sdk": "11.2.0",
-    "@clawdbot/lobster": "2026.6.11",
+    "@clawdbot/lobster": "2026.9.13",
     "@matrix-org/matrix-sdk-crypto-nodejs": "0.6.6",
-    "@matrix-org/matrix-sdk-crypto-wasm": "18.5.0",
+    "@matrix-org/matrix-sdk-crypto-wasm": "18.8.0",
     "fake-indexeddb": "6.2.5",
-    "markdown-it": "15.0.0",
-    "matrix-js-sdk": "42.2.0",
+    "markdown-it": "15.0.2",
+    "matrix-js-sdk": "42.4.0",
     "music-metadata": "11.15.0",
-    "@lancedb/lancedb": "0.37.1",
-    "apache-arrow": "18.1.0",
-    "@azure/identity": "4.13.2",
-    "@microsoft/teams.api": "2.0.15",
-    "@microsoft/teams.apps": "2.0.15",
-    "@microsoft/mxc-sdk": "0.7.0",
+    "apache-arrow": "21.2.0",
+    "@azure/identity": "4.13.3",
+    "@microsoft/teams.api": "2.1.0",
+    "@microsoft/teams.apps": "2.1.0",
+    "@microsoft/mxc-sdk": "0.8.0",
     "jsonc-parser": "3.3.1",
+    "@huggingface/tokenizers": "0.2.0",
+    "jose": "6.2.12",
     "werift": "0.24.4",
-    "@copilotkit/aimock": "1.39.0",
-    "@openclaw/crabline": "0.1.17",
-    "@noble/ciphers": "2.3.0",
-    "@noble/curves": "2.3.0",
-    "@noble/hashes": "2.3.0",
-    "@slack/bolt": "5.0.0",
-    "@slack/socket-mode": "3.0.0",
-    "@slack/types": "3.0.0",
-    "@slack/web-api": "8.0.0",
-    "get-east-asian-width": "1.6.0",
-    "@aws-sdk/client-s3": "3.1116.0",
-    "@aws-sdk/s3-request-presigner": "3.1116.0",
+    "@copilotkit/aimock": "1.42.1",
+    "@openclaw/crabline": "0.1.27",
+    "@noble/ciphers": "2.4.0",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "@slack/bolt": "5.1.0",
+    "@slack/types": "3.1.0",
+    "@slack/web-api": "8.1.1",
+    "get-east-asian-width": "1.7.0",
+    "abort-controller": "3.0.0",
+    "@aws-sdk/client-s3": "3.1136.0",
+    "@aws-sdk/s3-request-presigner": "3.1136.0",
     "@tloncorp/tlon-skill": "0.5.0",
     "@urbit/aura": "3.0.0",
-    "tokenjuice": "0.8.1",
-    "@twurple/api-call": "8.1.4",
-    "@twurple/auth": "8.1.4",
-    "@twurple/chat": "8.1.4",
-    "audio-decode": "2.2.3",
+    "tokenjuice": "0.8.5",
+    "@twurple/api-call": "8.2.0",
+    "@twurple/auth": "8.2.0",
+    "@twurple/chat": "8.2.0",
+    "audio-decode": "3.12.0",
     "baileys": "7.0.0-rc14",
-    "zca-js": "2.1.2"
+    "zca-js": "2.2.0"
   },
   "devDependencies": {
-    "@a2ui/lit": "0.10.3",
-    "@a2ui/web_core": "0.10.6",
-    "@copilotkit/aimock": "1.39.0",
+    "@a2ui/lit": "0.11.0",
+    "@a2ui/web_core": "0.11.0",
+    "@babel/types": "8.0.6",
+    "@copilotkit/aimock": "1.42.1",
     "@lit-labs/signals": "0.3.0",
     "@lit/context": "1.1.6",
     "@lit/task": "1.0.3",
     "@mdx-js/mdx": "3.1.1",
-    "@opentelemetry/sdk-node": "0.221.0",
+    "@openclaw/crabline": "0.1.27",
+    "@opentelemetry/sdk-node": "0.222.0",
+    "@pnpm/parse-overrides": "1001.0.4",
     "@shikijs/core": "4.4.3",
     "@shikijs/engine-javascript": "4.4.3",
     "@shikijs/engine-oniguruma": "4.4.3",
+    "@sindresorhus/slugify": "3.0.1",
     "@types/express": "5.0.6",
     "@types/hosted-git-info": "3.0.5",
     "@types/jsdom": "30.0.0",
     "@types/markdown-it": "14.2.0",
     "@types/mdast": "4.0.4",
-    "@types/ms": "2.1.0",
-    "@types/node": "26.2.0",
+    "@types/node": "26.6.2",
     "@types/semver": "7.8.0",
     "@types/web-push": "3.6.4",
     "@types/ws": "8.18.1",
-    "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "@vitest/coverage-v8": "4.1.11",
-    "esbuild": "0.28.2",
+    "@vitest/coverage-v8": "5.0.1",
+    "acpx": "0.19.1",
+    "apache-arrow": "21.2.0",
+    "baileys": "7.0.0-rc14",
+    "htmlparser2": "12.0.0",
     "ipaddr.js": "2.5.0",
-    "jscpd": "5.0.16",
-    "jsdom": "29.1.1",
+    "jscpd": "5.3.0",
+    "jsdom": "30.1.0",
     "lit": "3.3.3",
     "lit-analyzer": "2.0.3",
-    "markdown-it": "15.0.0",
-    "marked": "18.0.10",
-    "oxfmt": "0.60.0",
-    "oxlint": "1.79.0",
-    "oxlint-tsgolint": "7.0.2001",
-    "pako": "3.0.1",
-    "playwright": "1.62.1",
-    "postcss": "8.5.26",
+    "markdown-it": "15.0.2",
+    "markdown-it-anchor": "10.0.0",
+    "marked": "18.0.13",
+    "minipass": "7.1.3",
+    "nostr-tools": "2.25.2",
+    "oxfmt": "0.68.0",
+    "oxlint": "1.83.0",
+    "oxlint-tsgolint": "7.0.2002",
+    "pako": "3.0.2",
+    "playwright": "1.63.0",
+    "postcss": "8.5.28",
     "postcss-lit": "1.4.1",
+    "postcss-selector-parser": "7.1.6",
     "shiki": "4.4.3",
     "signal-utils": "0.21.1",
     "sigstore": "5.0.0",
     "string-width": "8.2.2",
-    "stylelint": "17.14.1",
+    "stylelint": "17.15.0",
     "stylelint-config-recommended": "18.0.0",
-    "tsdown": "0.22.14",
-    "tsx": "4.23.12",
+    "tinyglobby": "0.2.17",
+    "tree-sitter-bash": "0.25.1",
+    "tsdown": "0.23.0",
+    "tsx": "4.23.15",
+    "typescript": "7.1.0-dev.20260920.1",
     "unrun": "0.3.1",
-    "vite": "8.2.2",
-    "vitest": "4.1.11"
+    "vite": "8.3.0",
+    "vitest": "5.0.1"
   },
   "optionalDependencies": {
     "sqlite-vec": "0.1.9"
   },
   "engines": {
-    "node": ">=22.22.3 <23 || >=24.15.0 <25 || >=25.9.0"
+    "node": ">=24.16.0 <25 || >=26.1.0"
   }
 }

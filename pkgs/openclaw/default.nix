@@ -27,20 +27,20 @@
 
 buildNpmPackage rec {
   pname = "openclaw";
-  version = "2026.8.2";
+  version = "2026.9.8";
 
   # Use the pre-built npm registry tarball. OpenClaw's build from source
   # requires pnpm, tsdown, and a complex multi-stage pipeline. The npm
   # tarball ships pre-compiled dist/ and is the official release artifact.
   src = fetchurl {
     url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-IOnC8WdC386/shUE5RBn0x4AChlXcSb/T6sRfl6H2+I=";
+    hash = "sha256-MX4KWNsys4bgEYf+nFxN5UH0zm2BVle/eaECYJuBdSo=";
   };
 
   sourceRoot = "package";
 
   # Generated from package-lock.json (see update instructions above)
-  npmDepsHash = "sha256-tGUcnXNvzZjfXRPfS+/sOv+r6BOdwuVbVgb+d0fG9MI=";
+  npmDepsHash = "sha256-QTELfRJ+RWLcKc2q742OOitMlXFfsJQtbpOKaHxizwU=";
 
   nativeBuildInputs = [ makeWrapper jq ];
 
