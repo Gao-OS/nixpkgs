@@ -323,6 +323,48 @@ test_unknown_runtime_workspace_dependency_fails() {
     fail "generator did not explain the unresolved workspace dependency"
 }
 
+test_bundled_workboard_workspace_dependencies_are_not_installed() {
+  local case_dir="${TMP_ROOT}/bundled-workboard"
+  local repo="${case_dir}/source"
+  local tarball="${case_dir}/openclaw-2026.9.8.tgz"
+  local dest="${case_dir}/dest"
+
+  mkdir -p "$case_dir"
+  create_source_repo "$repo" "2026.9.8" "@openclaw/gateway-protocol"
+  python3 - "$repo/extensions/example/package.json" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path) as source:
+    package = json.load(source)
+package["dependencies"]["@openclaw/workboard-contract"] = "workspace:*"
+with open(path, "w") as target:
+    json.dump(package, target)
+PY
+  git -C "$repo" add extensions/example/package.json
+  git -C "$repo" commit -qm "bundled Workboard dependencies"
+  git -C "$repo" tag -f v2026.9.8 >/dev/null
+  create_npm_tarball "$tarball" "2026.9.8"
+  create_mock_npm "${case_dir}/bin"
+
+  run_generator \
+    "2026.9.8" "$repo" "$tarball" "${case_dir}/work" "$dest" "${case_dir}/bin" \
+    >/dev/null || fail "generator rejected bundled Workboard workspace dependencies"
+
+  python3 - "$dest/package-lock.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1]) as source:
+    dependencies = json.load(source)["packages"][""]["dependencies"]
+assert "@openclaw/gateway-protocol" not in dependencies
+assert "@openclaw/workboard-contract" not in dependencies
+assert dependencies["external-package"] == "1.2.3"
+assert dependencies["@openclaw/ai"] == "2026.9.8"
+PY
+}
+
 test_workdir_environment_cannot_delete_arbitrary_path() {
   local case_dir="${TMP_ROOT}/workdir-safety"
   local repo="${case_dir}/source"
@@ -353,5 +395,6 @@ test_base_source_tag_version_must_match
 test_remote_query_errors_do_not_trigger_fallback
 test_published_manifest_replaces_workspace_dependencies
 test_unknown_runtime_workspace_dependency_fails
+test_bundled_workboard_workspace_dependencies_are_not_installed
 test_workdir_environment_cannot_delete_arbitrary_path
 echo "PASS: gen-openclaw-lockfile"

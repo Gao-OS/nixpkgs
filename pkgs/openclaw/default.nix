@@ -67,7 +67,7 @@ buildNpmPackage rec {
           'if (isSqliteWalResetSafeVersion(version)) return;' \
           'return;'
     done
-
+  '' + lib.optionalString (version == "2026.8.2") ''
     # PATCHED for openclaw@2026.8.2 - see Gao-OS/nixpkgs#34 and upstream
     # openclaw/openclaw#135713 (commit 8c5442c01bb0a529c001b5082d051f61e8e6682d). 2026.8.2 still
     # treats advisory startup migration warnings as fatal, which crash-loops the gateway on a
@@ -75,10 +75,9 @@ buildNpmPackage rec {
     # and refuses startup even though required state is recoverable. Commenting out the
     # warning-only gate matches the severity policy that landed on upstream main via #135713;
     # the blocker-only fatal path and the pluginConvergence blocking-diagnostic check below
-    # remain unchanged. Remove this patch once an upstream release ships that contains
-    # 8c5442c0... (i.e. openclaw@>=2026.9.1 stable). substituteInPlace --replace-fail will fail
-    # the build if the upstream bundle ever renames the chunk, which is the signal to revisit
-    # this patch.
+    # remain unchanged. Apply only to 2026.8.2; openclaw@>=2026.9.1 stable contains
+    # 8c5442c0... and uses the upstream implementation. substituteInPlace --replace-fail
+    # still verifies that the patched 2026.8.2 bundle has the expected warning gate.
     substituteInPlace dist/doctor-config-preflight-B-Zv4Qey.js \
       --replace-fail \
           '		if (params.startupMigrationWarnings.length > 0) throwStartupMigrationRefusal(formatStartupMigrationFailure({
