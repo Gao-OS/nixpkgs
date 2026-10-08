@@ -101,6 +101,11 @@ nix run .#code-server-latest -- --help
 
 This repo exports a NixOS module for running OpenClaw as a systemd service.
 
+The flake overlay uses Node from this repository's locked nixpkgs input so
+OpenClaw's SQLite safety requirement is preserved when the host uses older
+nixpkgs. Builds include a gateway startup and health check. Legacy non-flake
+overlays must supply a Node runtime with WAL-reset-safe SQLite.
+
 ### Enable the service
 
 ```nix

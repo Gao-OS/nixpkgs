@@ -23,6 +23,7 @@
   nodejs_24,
   makeWrapper,
   jq,
+  stdenv,
 }:
 
 buildNpmPackage rec {
@@ -59,14 +60,6 @@ buildNpmPackage rec {
   preConfigure = ''
     jq 'del(.scripts.preinstall, .scripts.prepack, .scripts.prepare, .scripts.postinstall, .scripts.build)' \
       package.json > package.json.tmp && mv package.json.tmp package.json
-
-    # The bundled Node.js SQLite is usable here despite OpenClaw's version gate.
-    for file in $(grep -rl 'if (isSqliteWalResetSafeVersion(version)) return;' dist/ || true); do
-      substituteInPlace "$file" \
-        --replace-fail \
-          'if (isSqliteWalResetSafeVersion(version)) return;' \
-          'return;'
-    done
   '' + lib.optionalString (version == "2026.8.2") ''
     # PATCHED for openclaw@2026.8.2 - see Gao-OS/nixpkgs#34 and upstream
     # openclaw/openclaw#135713 (commit 8c5442c01bb0a529c001b5082d051f61e8e6682d). 2026.8.2 still
@@ -144,6 +137,13 @@ buildNpmPackage rec {
         fi
       done
     done
+  '';
+
+  doInstallCheck = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    ${nodejs}/bin/node ${./gateway-smoke-test.mjs} "$out/bin/openclaw"
+    runHook postInstallCheck
   '';
 
   meta = with lib; {

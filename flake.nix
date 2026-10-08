@@ -28,6 +28,11 @@
           spockPackages = (import ./overlays/postgresql-spock.nix) final prev;
         in
         packages // spockPackages // {
+          # OpenClaw's SQLite safety requirement must also hold for overlay consumers.
+          openclaw = packages.openclaw.override {
+            nodejs_24 = nixpkgs.legacyPackages.${final.stdenv.hostPlatform.system}.nodejs_24;
+          };
+
           # Re-export ollama variants from upstream nixpkgs (prev avoids infinite recursion)
           inherit (prev) ollama ollama-rocm ollama-cuda ollama-vulkan;
         };
