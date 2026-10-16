@@ -188,7 +188,10 @@ echo "==> Running npm install --package-lock-only..."
 rm -f npm-shrinkwrap.json
 # Match the package build flags. OpenClaw can ship extension dependencies whose
 # peer ranges lag the versions selected by the release package metadata.
-npm install --package-lock-only --package-lock=true --ignore-scripts --legacy-peer-deps
+# The source checkout's npm cooldown must allow the matching published AI
+# package when generating a lockfile for a new OpenClaw release.
+npm install --package-lock-only --package-lock=true --ignore-scripts --legacy-peer-deps \
+  --min-release-age-exclude=@openclaw/ai
 
 if [ ! -f package-lock.json ]; then
   echo "::error::npm did not generate package-lock.json"

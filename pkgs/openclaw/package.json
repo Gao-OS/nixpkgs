@@ -1,6 +1,6 @@
 {
   "name": "openclaw",
-  "version": "2026.10.3",
+  "version": "2026.10.4",
   "openclaw": {
     "updateAdmissionProtocol": 1,
     "schemaVersions": {
@@ -50,6 +50,7 @@
     "node-host-launcher.mjs",
     "node-compile-cache.mjs",
     "openclaw.mjs",
+    "worker-heap-flag.mjs",
     "pnpm-workspace.yaml",
     "README.md",
     "THIRD_PARTY_NOTICES.md",
@@ -1668,7 +1669,7 @@
     "@mistralai/mistralai": "2.7.0",
     "@modelcontextprotocol/sdk": "1.31.0",
     "@mozilla/readability": "0.6.0",
-    "@openclaw/ai": "2026.10.3",
+    "@openclaw/ai": "2026.10.4",
     "@openclaw/fs-safe": "0.24.2",
     "@openclaw/proxyline": "0.3.12",
     "@silvia-odwyer/photon-node": "0.3.4",

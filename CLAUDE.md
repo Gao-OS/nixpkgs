@@ -83,7 +83,7 @@ Each package follows the nixpkgs convention:
    - Built from pre-compiled npm registry tarball using `buildNpmPackage`
    - Requires Node.js 24; includes generated `package-lock.json`
    - NixOS module available at `modules/nixos/openclaw.nix`
-   - Version: 2026.3.31
+   - Version: 2026.10.4
    - Use `scripts/gen-openclaw-lockfile.sh <version>` to regenerate `pkgs/openclaw/package-lock.json` when updating
 
 ## Development Commands

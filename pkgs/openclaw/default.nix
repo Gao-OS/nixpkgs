@@ -28,20 +28,20 @@
 
 buildNpmPackage rec {
   pname = "openclaw";
-  version = "2026.10.3";
+  version = "2026.10.4";
 
   # Use the pre-built npm registry tarball. OpenClaw's build from source
   # requires pnpm, tsdown, and a complex multi-stage pipeline. The npm
   # tarball ships pre-compiled dist/ and is the official release artifact.
   src = fetchurl {
     url = "https://registry.npmjs.org/${pname}/-/${pname}-${version}.tgz";
-    hash = "sha256-dhaF0BDZZkXR3qvhkpns3iY+rD8kiaFzIvSMRhoRMKU=";
+    hash = "sha256-CkHC7XCKvIEkmN5Y1x0Fjd4yJwBIjW6AYsfAcN/cptw=";
   };
 
   sourceRoot = "package";
 
   # Generated from package-lock.json (see update instructions above)
-  npmDepsHash = "sha256-yHjUPMBXqB+6KqOVrIHgcN1++IE400P9/5c63O3wSi0=";
+  npmDepsHash = "sha256-HdC7jd9weD19a1pOpJPTZN3RpzWrdlXmIY1hhogDhTA=";
 
   nativeBuildInputs = [ makeWrapper jq ];
 
@@ -103,6 +103,19 @@ buildNpmPackage rec {
     makeWrapper ${nodejs_24}/bin/node "$out/bin/openclaw" \
       --add-flags "$out/lib/node_modules/openclaw/openclaw.mjs"
 
+    lib="$out/lib/node_modules/openclaw"
+    # npm ci/prune replaces bundled packages with registry copies, losing
+    # upstream patches (Gao-OS/nixpkgs#43). Restore the published bundles,
+    # including proxyline and its pinned undici peer, from the verified source.
+    bundledPaths=()
+    for dependency in $(jq -r '.bundleDependencies // [] | .[]' "$lib/package.json"); do
+      rm -rf "$lib/node_modules/$dependency"
+      bundledPaths+=("package/node_modules/$dependency")
+    done
+    if [ "''${#bundledPaths[@]}" -gt 0 ]; then
+      tar -xzf ${src} --strip-components=1 -C "$lib" "''${bundledPaths[@]}"
+    fi
+
     # The pre-built npm tarball ships a `.openclaw-lifecycle-pending`
     # marker; on first invocation the runtime tries
     # `mkdir .openclaw-lifecycle-lock` inside the package directory and
@@ -111,7 +124,6 @@ buildNpmPackage rec {
     # the marker) so the gateway starts in a clean state. Preinstall
     # remains skipped because its `enforceSupportedNodeRuntime` rejects
     # Node <24.15.0; the bundled postinstall has no version gate.
-    lib="$out/lib/node_modules/openclaw"
     ${nodejs_24}/bin/node "$lib/scripts/postinstall-bundled-plugins.mjs" \
       || echo "openclaw postinstall script failed; relying on marker cleanup only"
     # Defense-in-depth: even if the upstream script changes shape in the
