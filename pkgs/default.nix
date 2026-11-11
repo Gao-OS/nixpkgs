@@ -5,4 +5,5 @@ pkgs: {
   pmbootstrap-new = pkgs.callPackage ./pmbootstrap {};
   code-server-latest = pkgs.callPackage ./code-server {};
   openclaw = pkgs.callPackage ./openclaw {};
+  secrethub-agent = pkgs.callPackage ./secrethub-agent {};
 }

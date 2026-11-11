@@ -8,6 +8,7 @@ Custom package collection for GaoOS, providing additional packages and tools not
 - **code-server-latest**: VS Code running on a remote server (v4.115.0)
 - **pmbootstrap-new**: Tool to develop and install postmarketOS (v3.6.0)
 - **openclaw**: Multi-channel AI gateway (v2026.10.4)
+- **secrethub-agent**: SecretHub Agent daemon, prebuilt upstream release (Linux only; updated by `update-secrethub-agent.yml`)
 - **ollama** / **ollama-rocm** / **ollama-cuda** / **ollama-vulkan**: Run large language models locally (from upstream nixpkgs, where supported; ROCm/CUDA variants are x86_64-linux only)
 
 ## Usage

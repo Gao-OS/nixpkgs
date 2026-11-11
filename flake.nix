@@ -59,6 +59,9 @@
           # Default package
           default = pkgs.caddy-with-plugins;
         }
+        // nixpkgs.lib.optionalAttrs isLinux {
+          inherit (pkgs) secrethub-agent;
+        }
         // optionalAvailablePackage true "code-server-latest" pkgs.code-server-latest
         // optionalAvailablePackage true "ollama" pkgs.ollama
         // optionalAvailablePackage isX86Linux "ollama-rocm" pkgs.ollama-rocm
