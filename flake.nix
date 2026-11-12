@@ -3,9 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    # Source of the SecretHub Agent NixOS module. Kept on the same release as
+    # pkgs/secrethub-agent by the "Update SecretHub Agent" workflow.
+    secrethub = {
+      url = "github:gsmlg-dev/secrethub/v1.0.0-rc.32";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, secrethub }:
     let
       # Systems to support
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
@@ -77,6 +84,7 @@
       nixosModules.openclaw = import ./modules/nixos/openclaw.nix;
       nixosModules.ollama-docker = import ./modules/nixos/ollama-docker.nix;
       nixosModules.postgresql-spock = import ./modules/nixos/postgresql-spock.nix;
+      nixosModules.secrethub-agent = import ./modules/nixos/secrethub-agent.nix { inherit self secrethub; };
 
       # Legacy package output (for nix-build support)
       legacyPackages = forAllSystems (system: nixpkgsFor.${system});

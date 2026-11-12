@@ -159,6 +159,29 @@ overlays must supply a Node runtime with WAL-reset-safe SQLite.
 | `services.openclaw.extraEnvironment` | `{}` | Extra env vars |
 | `services.openclaw.openFirewall` | `false` | Open the gateway port in the firewall |
 
+### SecretHub Agent NixOS module
+
+`nixosModules.secrethub-agent` re-exports the upstream SecretHub Agent module
+from the pinned `secrethub` input and sets its default `package` to this
+repository's prebuilt `secrethub-agent`. That input and the package always
+point at the same release.
+
+```nix
+{
+  imports = [ gaoos-nixpkgs.nixosModules.secrethub-agent ];
+  services.secrethub-agent = {
+    enable = true;
+    coreUrl = "https://core.example:4665";
+    hostKeyPath = "/etc/ssh/ssh_host_rsa_key";
+  };
+}
+```
+
+To upgrade, run the `Update SecretHub Agent` workflow. It updates the package
+version and hashes, changes the `secrethub` input to the same tag, refreshes
+`flake.lock`, then builds the package and runs `nix flake check` before
+pushing. In the consuming flake, then run `nix flake update gaoos-pkgs`.
+
 ## Development
 
 ### Adding a New Package
