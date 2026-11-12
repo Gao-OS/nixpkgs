@@ -7,7 +7,7 @@
     # Source of the SecretHub Agent NixOS module. Kept on the same release as
     # pkgs/secrethub-agent by the "Update SecretHub Agent" workflow.
     secrethub = {
-      url = "github:gsmlg-dev/secrethub/v1.0.0-rc.32";
+      url = "github:gsmlg-dev/secrethub/v1.0.0-rc.33";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

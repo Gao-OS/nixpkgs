@@ -15,18 +15,18 @@
     if stdenv.hostPlatform.system == "x86_64-linux"
     then {
       name = "linux-amd64";
-      hash = "sha256-G/Nbh0tsKsqRhG6xSNlnnSZ/41zpV6ewc5x5YDBik2Y=";
+      hash = "sha256-OSkP0J2BCy7IsNypKhrwXbocakwn8D61tl3SC1s4LUY=";
     }
     else if stdenv.hostPlatform.system == "aarch64-linux"
     then {
       name = "linux-arm64";
-      hash = "sha256-Nuu+gw7nF529SCFQGzqG9xbPDwWX6G3Ye6YHIfTTP2w=";
+      hash = "sha256-b+N8F9gU3DBvgfu/iqFde8XWVg5CfXV7HcaeRHzg0RQ=";
     }
     else throw "Unsupported platform: ${stdenv.hostPlatform.system}";
 in
   stdenv.mkDerivation rec {
     pname = "secrethub-agent";
-    version = "1.0.0-rc.32";
+    version = "1.0.0-rc.33";
 
     # Upstream Elixir release tarball (bundled ERTS), patched for the Nix store.
     src = fetchurl {

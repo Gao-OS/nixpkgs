@@ -48,16 +48,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1794365854,
-        "narHash": "sha256-TZWLpHr66breZHSKCO/yOj1UO+wmN0qaRT11cHauUQM=",
+        "lastModified": 1794498919,
+        "narHash": "sha256-j2OHSvv9v2ZFF9qIjokUuHV7ChVew2kRAnNQmeyYlJ4=",
         "owner": "gsmlg-dev",
         "repo": "secrethub",
-        "rev": "a098b9f880d765f83f20cbe75c20aa071c650f17",
+        "rev": "2e7674dc03b5bd08b4b811539358349919fce1c5",
         "type": "github"
       },
       "original": {
         "owner": "gsmlg-dev",
-        "ref": "v1.0.0-rc.32",
+        "ref": "v1.0.0-rc.33",
         "repo": "secrethub",
         "type": "github"
       }
